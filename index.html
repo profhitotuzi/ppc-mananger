@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PPC Manager · IFRO Guajará-Mirim</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F3EF;--surf:#FFF;--surf2:#EEEBE5;--brd:#E2DDD6;--brd2:#C8C2BA;
+  --tx:#1A1814;--tx2:#6B6560;--tx3:#9E998F;
+  --acc:#1A4E6B;--acc-l:#E6F0F7;--acc-xl:#F0F6FB;
+  --grn:#1E7048;--grn-l:#D4EDDA;--grn-xl:#F0FAF4;
+  --warn:#A05C00;--warn-l:#FFF3CD;--warn-xl:#FFFBF0;
+  --red:#9B2626;--red-l:#FDEAEA;
+  --pur:#5C2D91;--pur-l:#EDE0FF;
+  --sam:#1E7048;--sam-l:#D4EDDA; /* Samaúma - verde */
+  --cas:#18527A;--cas-l:#CCE5F5; /* Castanheira - azul */
+  --ser:#6B4A1E;--ser-l:#F5E6D0; /* Seringueira - marrom */
+  --r:10px;--rl:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-size:14px;min-height:100vh;}
+::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:3px;}
+
+/* ── SCREENS ── */
+.screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--acc);padding:20px;}
+.box{background:#fff;border-radius:20px;padding:36px 38px;max-width:440px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,.22);}
+.logo{text-align:center;margin-bottom:24px;}
+.logo .inst{font-size:10px;font-weight:600;color:var(--tx3);letter-spacing:.12em;text-transform:uppercase;}
+.logo .ttl{font-size:24px;font-weight:700;color:var(--acc);margin:5px 0 3px;}
+.logo .sub{font-size:12px;color:var(--tx3);}
+.field{margin-bottom:13px;}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--tx2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;}
+input[type=text],input[type=email],input[type=password],select,textarea{
+  width:100%;border:1.5px solid var(--brd2);border-radius:9px;padding:10px 13px;
+  font-size:13px;font-family:inherit;color:var(--tx);background:#fff;outline:none;transition:border-color .15s;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--acc);}
+.big-btn{width:100%;background:var(--acc);color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:10px;transition:background .15s;}
+.big-btn:hover{background:#153F57;} .big-btn:disabled{opacity:.55;cursor:not-allowed;}
+.tabs2{display:flex;background:var(--surf2);border-radius:10px;padding:4px;margin-bottom:20px;}
+.tab2{flex:1;padding:8px;border-radius:7px;font-size:12px;font-weight:600;text-align:center;cursor:pointer;color:var(--tx3);transition:all .15s;}
+.tab2.active{background:#fff;color:var(--acc);box-shadow:0 1px 4px rgba(0,0,0,.1);}
+.amsg{border-radius:8px;padding:10px 13px;font-size:12px;margin-top:8px;display:none;}
+.amsg.err{background:var(--red-l);color:var(--red);} .amsg.ok{background:var(--grn-l);color:var(--grn);}
+.anote{font-size:11px;color:var(--tx3);text-align:center;margin-top:14px;line-height:1.6;}
+
+/* ── STEP-BOX (config) ── */
+.step-box{background:var(--acc-xl);border-radius:12px;padding:14px 16px;margin-bottom:14px;}
+.step-box h3{font-size:11px;font-weight:700;color:var(--acc);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;}
+.step-box .hint{font-size:11px;color:var(--tx2);margin-top:5px;line-height:1.5;}
+
+/* ── APP LAYOUT ── */
+#app{display:none;}
+.app{display:flex;min-height:100vh;}
+.sidebar{width:240px;flex-shrink:0;background:var(--acc);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sl-head{padding:16px 18px 12px;border-bottom:1px solid rgba(255,255,255,.12);}
+.sl-head .inst{font-size:9px;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;}
+.sl-head .ttl{font-size:13px;font-weight:700;color:#fff;margin-top:4px;}
+.sl-head .sub{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px;}
+.sl-user{padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:9px;}
+.av{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.sl-user .un{font-size:12px;font-weight:600;color:#fff;} .sl-user .ur{font-size:10px;color:rgba(255,255,255,.5);}
+.sl-role{font-size:9px;padding:2px 7px;border-radius:8px;margin-top:2px;display:inline-block;}
+.sl-role.pres{background:rgba(255,215,0,.25);color:#FFD700;}
+.sl-role.mem{background:rgba(255,255,255,.15);color:rgba(255,255,255,.7);}
+.lo-btn{margin-left:auto;background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:16px;padding:2px;transition:color .15s;}
+.lo-btn:hover{color:#fff;}
+.snav{padding:8px;flex:1;}
+.ns{font-size:9px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.1em;text-transform:uppercase;padding:10px 10px 4px;}
+.ni{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;color:rgba(255,255,255,.72);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;margin-bottom:1px;user-select:none;}
+.ni:hover{background:rgba(255,255,255,.1);color:#fff;}
+.ni.active{background:rgba(255,255,255,.18);color:#fff;}
+.ni .ic{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
+.nb{margin-left:auto;background:rgba(255,255,255,.2);color:rgba(255,255,255,.9);font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;}
+.nb.red{background:#C0392B;}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;}
+.topbar{background:var(--surf);border-bottom:1px solid var(--brd);padding:12px 22px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:20;flex-shrink:0;}
+.topbar h1{font-size:15px;font-weight:700;}
+.tr{margin-left:auto;display:flex;align-items:center;gap:7px;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s;}
+.btn-p{background:var(--acc);color:#fff;} .btn-p:hover{background:#153F57;}
+.btn-g{background:transparent;color:var(--tx2);border:1.5px solid var(--brd2);} .btn-g:hover{background:var(--surf2);}
+.btn-red{background:var(--red);color:#fff;} .btn-red:hover{opacity:.85;}
+.btn-grn{background:var(--grn);color:#fff;} .btn-grn:hover{opacity:.85;}
+.btn-warn{background:var(--warn);color:#fff;} .btn-warn:hover{opacity:.85;}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.content{flex:1;overflow-y:auto;padding:20px;}
+.view{display:none;} .view.active{display:block;}
+.ph{font-size:18px;font-weight:700;margin-bottom:3px;}
+.ps{font-size:12px;color:var(--tx3);margin-bottom:16px;}
+
+/* ── METRICS ── */
+.mets{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.mc{background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+.mc .ml{font-size:10px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;}
+.mc .mv{font-size:26px;font-weight:700;margin:4px 0 1px;line-height:1;font-family:'DM Mono',monospace;}
+.mc .ms{font-size:11px;color:var(--tx3);}
+.mc.grn .mv{color:var(--grn);} .mc.acc .mv{color:var(--acc);} .mc.warn .mv{color:var(--warn);} .mc.red .mv{color:var(--red);}
+
+/* ── PROGRESS ── */
+.pw{background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:16px;margin-bottom:14px;}
+.pw-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.pw-t{font-size:12px;font-weight:600;} .pw-p{font-size:13px;font-weight:700;color:var(--acc);font-family:'DM Mono',monospace;}
+.pbar{height:7px;background:var(--surf2);border-radius:4px;overflow:hidden;}
+.pfill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--grn),var(--acc));transition:width .5s;}
+
+/* ── CARDS ── */
+.card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:10px;}
+.ch{padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s;user-select:none;}
+.ch:hover{background:var(--surf2);}
+.sn{width:30px;height:30px;border-radius:7px;background:var(--acc-l);color:var(--acc);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;font-family:'DM Mono',monospace;}
+.si{flex:1;min-width:0;} .si .tt{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;} .si .st{font-size:11px;color:var(--tx3);margin-top:1px;}
+.cr{display:flex;align-items:center;gap:7px;flex-shrink:0;}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;}
+.bd{background:var(--grn-l);color:var(--grn);} .bp{background:var(--acc-l);color:var(--acc);}
+.br{background:var(--warn-l);color:var(--warn);} .bt{background:var(--surf2);color:var(--tx3);border:1px solid var(--brd);}
+.bsam{background:var(--sam-l);color:var(--sam);} .bcas{background:var(--cas-l);color:var(--cas);} .bser{background:var(--ser-l);color:var(--ser);}
+.cb{border-top:1px solid var(--brd);padding:14px;display:none;}
+.cb.open{display:block;}
+.dg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.di .dl{font-size:10px;color:var(--tx3);font-weight:600;margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em;}
+.di .dv{font-size:12px;color:var(--tx);}
+.ssel{font-size:12px;padding:6px 9px;border-radius:7px;border:1.5px solid var(--brd2);font-family:inherit;background:var(--surf);color:var(--tx);cursor:pointer;width:100%;outline:none;}
+.ssel:focus{border-color:var(--acc);} .ssel:disabled{opacity:.5;}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;background:var(--surf);border-radius:var(--rl);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+.tbl th{background:var(--acc);color:#fff;font-size:11px;font-weight:700;padding:10px 12px;text-align:left;letter-spacing:.04em;}
+.tbl td{padding:10px 12px;font-size:12px;border-bottom:1px solid var(--brd);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--surf2);}
+
+/* ── GRUPO HEADERS ── */
+.gh{padding:12px 16px;border-radius:var(--r);margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+.gh.sam{background:var(--sam-l);} .gh.cas{background:var(--cas-l);} .gh.ser{background:var(--ser-l);}
+.gh .gi{font-size:20px;} .gh .gn{font-size:14px;font-weight:700;} .gh .gd{font-size:11px;color:var(--tx3);}
+
+/* ── MESSAGES ── */
+.msg-item{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:13px 15px;margin-bottom:8px;border-left:3px solid var(--brd2);}
+.msg-item.aviso{border-left-color:var(--acc);}
+.msg-item.alerta{border-left-color:var(--warn);}
+.msg-item.urgente{border-left-color:var(--red);}
+.msg-item.info{border-left-color:var(--grn);}
+.msg-head{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+.msg-assunto{font-size:13px;font-weight:700;flex:1;}
+.msg-time{font-size:10px;color:var(--tx3);}
+.msg-para{font-size:10px;color:var(--tx3);}
+.msg-corpo{font-size:12px;color:var(--tx2);line-height:1.6;}
+.tipo-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px;}
+.tipo-aviso{background:var(--acc-l);color:var(--acc);}
+.tipo-alerta{background:var(--warn-l);color:var(--warn);}
+.tipo-urgente{background:var(--red-l);color:var(--red);}
+.tipo-info{background:var(--grn-l);color:var(--grn);}
+
+/* ── ATA ── */
+.ata-card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:0;overflow:hidden;margin-bottom:10px;}
+.ata-head{padding:14px 16px;background:var(--surf2);border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:10px;}
+.ata-body{padding:16px;}
+.ata-field{margin-bottom:12px;}
+.ata-field label{display:block;font-size:11px;font-weight:600;color:var(--tx2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;}
+.ata-field textarea{height:80px;resize:vertical;}
+.presenca-item{display:flex;align-items:center;gap:9px;padding:9px 12px;background:var(--surf2);border-radius:8px;margin-bottom:6px;}
+.presenca-nome{flex:1;font-size:13px;font-weight:500;}
+.presenca-status{font-size:11px;}
+.assin-btn{font-size:11px;padding:5px 12px;border-radius:7px;border:none;cursor:pointer;font-family:inherit;font-weight:600;}
+.assin-btn.ok{background:var(--grn-l);color:var(--grn);}
+.assin-btn.pend{background:var(--warn-l);color:var(--warn);}
+.assin-btn.assinado{background:var(--grn);color:#fff;}
+
+/* ── CRONOGRAMA ── */
+.reun-card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:14px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;}
+.reun-data{min-width:52px;text-align:center;background:var(--acc-l);border-radius:9px;padding:8px 6px;}
+.reun-data .rd-dia{font-size:20px;font-weight:700;color:var(--acc);line-height:1;font-family:'DM Mono',monospace;}
+.reun-data .rd-mes{font-size:9px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.06em;}
+.reun-data .rd-dsm{font-size:9px;color:var(--tx3);margin-top:2px;}
+.reun-info{flex:1;}
+.reun-info .ri-grp{font-size:12px;font-weight:700;margin-bottom:2px;}
+.reun-info .ri-hor{font-size:11px;color:var(--tx3);}
+.reun-info .ri-pau{font-size:12px;color:var(--tx2);margin-top:5px;line-height:1.5;}
+.reun-status{flex-shrink:0;}
+
+/* ── MEMBER TASK VIEW ── */
+.task-mine{background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:14px 16px;margin-bottom:8px;}
+.task-mine .tm-num{font-size:10px;font-weight:700;color:var(--acc);font-family:'DM Mono',monospace;margin-bottom:3px;}
+.task-mine .tm-tit{font-size:13px;font-weight:600;margin-bottom:5px;}
+.task-mine .tm-resp{font-size:11px;color:var(--tx3);}
+.task-mine .tm-foot{display:flex;align-items:center;gap:8px;margin-top:10px;}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border-radius:var(--rl);max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.modal-head{padding:16px 20px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:10px;}
+.modal-head h3{font-size:15px;font-weight:700;flex:1;}
+.modal-close{background:none;border:none;cursor:pointer;font-size:18px;color:var(--tx3);padding:2px;}
+.modal-close:hover{color:var(--tx);}
+.modal-body{padding:20px;}
+.modal-foot{padding:14px 20px;border-top:1px solid var(--brd);display:flex;justify-content:flex-end;gap:8px;}
+
+/* ── SEARCH/FILTER ── */
+.sb{display:flex;align-items:center;gap:7px;background:var(--surf);border:1.5px solid var(--brd2);border-radius:9px;padding:7px 12px;margin-bottom:11px;}
+.sb input{flex:1;border:none;outline:none;font-size:12px;font-family:inherit;background:transparent;}
+.fr{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.fc{padding:5px 11px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--brd2);background:var(--surf);color:var(--tx2);transition:all .15s;}
+.fc.active{background:var(--acc);color:#fff;border-color:var(--acc);}
+.fc:hover:not(.active){background:var(--surf2);}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:18px;right:18px;background:var(--tx);color:#fff;padding:10px 16px;border-radius:9px;font-size:12px;font-weight:600;transform:translateY(60px);opacity:0;transition:all .3s;z-index:999;max-width:300px;box-shadow:0 4px 16px rgba(0,0,0,.2);}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* ── MISC ── */
+.ld{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tx3);padding:16px 0;}
+.sp{width:14px;height:14px;border:2px solid var(--brd);border-top-color:var(--acc);border-radius:50%;animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.empty{text-align:center;padding:40px;color:var(--tx3);font-size:13px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.alert-box{background:var(--warn-l);border-radius:var(--r);padding:12px 14px;font-size:12px;color:var(--warn);margin-bottom:12px;border-left:3px solid var(--warn);}
+.info-box{background:var(--acc-xl);border-radius:var(--r);padding:12px 14px;font-size:12px;color:var(--acc);margin-bottom:12px;border-left:3px solid var(--acc);}
+.divider{height:1px;background:var(--brd);margin:16px 0;}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;}
+.tag-pres{background:#FEF3C7;color:#92400E;}
+.rtb{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--grn);background:var(--grn-l);padding:3px 8px;border-radius:10px;font-weight:600;}
+.rtd{width:5px;height:5px;border-radius:50%;background:var(--grn);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.hb{display:none;background:none;border:none;cursor:pointer;padding:4px;}
+.hb span{display:block;width:17px;height:2px;background:var(--tx2);margin:3px 0;border-radius:2px;}
+.ovr{display:none;}
+.senha-hint{font-size:11px;color:var(--warn);background:var(--warn-l);padding:8px 12px;border-radius:7px;margin-bottom:12px;}
+
+@media(max-width:768px){
+  .sidebar{position:fixed;left:-240px;top:0;z-index:100;height:100vh;transition:left .25s;}
+  .sidebar.open{left:0;} .ovr{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99;}
+  .ovr.show{display:block;} .hb{display:block;}
+  .mets{grid-template-columns:1fr 1fr;} .g2{grid-template-columns:1fr;}
+  .content{padding:14px;} .topbar{padding:10px 14px;}
+}
+@media(max-width:480px){.mets{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<!-- ══ CONFIG ═══════════════════════════════════════════════ -->
+<div class="screen" id="scr-config">
+  <div class="box">
+    <div class="logo">
+      <div class="inst">IFRO · Guajará-Mirim</div>
+      <div class="ttl">PPC Manager</div>
+      <div class="sub">Configuração inicial do Supabase</div>
+    </div>
+    <div class="step-box">
+      <h3>Project URL</h3>
+      <input type="text" id="cfg-url" placeholder="https://xxxxxxxxxxxx.supabase.co">
+      <div class="hint">Supabase → Settings → API → Project URL</div>
+    </div>
+    <div class="step-box">
+      <h3>Chave pública (anon key)</h3>
+      <input type="text" id="cfg-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+      <div class="hint">Supabase → Settings → API → anon public</div>
+    </div>
+    <button class="big-btn" onclick="saveConfig()">Conectar →</button>
+    <div class="amsg err" id="cfg-err"></div>
+    <p class="anote">Salvo permanentemente no navegador. Não precisará inserir novamente.</p>
+  </div>
+</div>
+
+<!-- ══ AUTH ═══════════════════════════════════════════════════ -->
+<div class="screen" id="scr-auth" style="display:none">
+  <div class="box">
+    <div class="logo">
+      <div class="inst">IFRO · Guajará-Mirim</div>
+      <div class="ttl">PPC Manager</div>
+      <div class="sub">Bacharelado em Sistemas de Informação · 2026</div>
+    </div>
+    <div class="tabs2">
+      <div class="tab2 active" onclick="swTab('login')">Entrar</div>
+      <div class="tab2" onclick="swTab('signup')">Criar conta</div>
+    </div>
+    <div id="t-login">
+      <div class="field"><label>E-mail</label><input type="email" id="l-em" placeholder="seu@ifro.edu.br" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="field"><label>Senha</label><input type="password" id="l-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="big-btn" id="l-btn" onclick="doLogin()">Entrar</button>
+    </div>
+    <div id="t-signup" style="display:none">
+      <div class="info-box">Conta criada pelo presidente? Use seu e-mail e a senha padrão <strong>ppc@2026</strong> para entrar pela aba <strong>Entrar</strong>.</div>
+      <div class="field"><label>Nome completo</label><input type="text" id="s-nm" placeholder="Seu nome completo"></div>
+      <div class="field"><label>E-mail</label><input type="email" id="s-em" placeholder="seu@ifro.edu.br"></div>
+      <div class="field"><label>Senha (mín. 6 caracteres)</label><input type="password" id="s-pw" placeholder="••••••••"></div>
+      <button class="big-btn" id="s-btn" onclick="doSignup()">Criar conta</button>
+    </div>
+    <div class="amsg err" id="auth-err"></div>
+    <div class="amsg ok" id="auth-ok"></div>
+    <p class="anote">Sistema exclusivo · Comissão PPC · Portaria 1463/2026</p>
+  </div>
+</div>
+
+<!-- ══ APP ════════════════════════════════════════════════════ -->
+<div id="app">
+<div class="app">
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sl-head">
+    <div class="inst">IFRO · Guajará-Mirim</div>
+    <div class="ttl">PPC Manager</div>
+    <div class="sub">Bacharelado em SI · 2026</div>
+  </div>
+  <div class="sl-user">
+    <div class="av" id="sb-av">?</div>
+    <div style="flex:1;min-width:0">
+      <div class="un" id="sb-name">…</div>
+      <span class="sl-role mem" id="sb-role-badge">Membro</span>
+    </div>
+    <button class="lo-btn" onclick="doLogout()" title="Sair">⏻</button>
+  </div>
+  <nav class="snav" id="snav"></nav>
+</aside>
+<div class="ovr" id="ovr" onclick="closeSB()"></div>
+
+<!-- Main -->
+<div class="main">
+  <header class="topbar">
+    <button class="hb" onclick="toggleSB()"><span></span><span></span><span></span></button>
+    <h1 id="ptitle">Dashboard</h1>
+    <span class="rtb" id="rtb" style="display:none"><span class="rtd"></span>Ao vivo</span>
+    <div class="tr" id="topbar-actions"></div>
+  </header>
+  <div class="content" id="content-area"></div>
+</div>
+</div>
+</div><!-- #app -->
+
+<!-- ══ MODALS ══════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-msg">
+  <div class="modal">
+    <div class="modal-head"><h3>Nova mensagem / aviso</h3><button class="modal-close" onclick="closeModal('modal-msg')">✕</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Para</label>
+        <select id="msg-para">
+          <option value="todos">Todos os membros</option>
+          <option value="samauma">Grupo Samaúma</option>
+          <option value="castanheira">Grupo Castanheira</option>
+          <option value="seringueira">Grupo Seringueira</option>
+        </select>
+      </div>
+      <div class="field"><label>Tipo</label>
+        <select id="msg-tipo">
+          <option value="aviso">📢 Aviso</option>
+          <option value="info">ℹ️ Informação</option>
+          <option value="alerta">⚠️ Alerta</option>
+          <option value="urgente">🚨 Urgente</option>
+        </select>
+      </div>
+      <div class="field"><label>Assunto</label><input type="text" id="msg-assunto" placeholder="Assunto da mensagem"></div>
+      <div class="field"><label>Mensagem</label><textarea id="msg-corpo" style="height:100px;resize:vertical" placeholder="Digite a mensagem..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-g" onclick="closeModal('modal-msg')">Cancelar</button>
+      <button class="btn btn-p" onclick="enviarMsg()">Enviar mensagem</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-reuniao">
+  <div class="modal">
+    <div class="modal-head"><h3 id="modal-reun-title">Nova reunião</h3><button class="modal-close" onclick="closeModal('modal-reuniao')">✕</button></div>
+    <div class="modal-body">
+      <div class="g2">
+        <div class="field"><label>Grupo</label>
+          <select id="r-grupo">
+            <option value="samauma">🌳 Samaúma — Qua 16h</option>
+            <option value="castanheira">🌰 Castanheira — Qui 10h</option>
+            <option value="seringueira">🍃 Seringueira — Qui 15h</option>
+          </select>
+        </div>
+        <div class="field"><label>Data</label><input type="date" id="r-data"></div>
+      </div>
+      <div class="g2">
+        <div class="field"><label>Hora início</label><input type="time" id="r-ini" value="15:00"></div>
+        <div class="field"><label>Hora fim</label><input type="time" id="r-fim" value="16:00"></div>
+      </div>
+      <div class="field"><label>Local</label><input type="text" id="r-local" value="Sala de Reuniões — Campus Guajará-Mirim"></div>
+      <div class="field"><label>Pauta</label><textarea id="r-pauta" style="height:80px" placeholder="Pontos da pauta..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-g" onclick="closeModal('modal-reuniao')">Cancelar</button>
+      <button class="btn btn-p" onclick="salvarReuniao()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-ata">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-head"><h3 id="modal-ata-title">Nova ATA</h3><button class="modal-close" onclick="closeModal('modal-ata')">✕</button></div>
+    <div class="modal-body">
+      <div class="g2">
+        <div class="field"><label>Nº da ATA</label><input type="text" id="ata-num" placeholder="ATA-001/2026"></div>
+        <div class="field"><label>Reunião</label><select id="ata-reuniao"><option value="">Selecionar...</option></select></div>
+      </div>
+      <div class="ata-field"><label>Conteúdo / Registro</label>
+        <textarea id="ata-conteudo" style="height:120px;resize:vertical" placeholder="Registro dos assuntos discutidos..."></textarea>
+      </div>
+      <div class="ata-field"><label>Deliberações / Encaminhamentos</label>
+        <textarea id="ata-deliber" style="height:80px;resize:vertical" placeholder="Decisões tomadas e responsáveis..."></textarea>
+      </div>
+      <div id="ata-presencas-area">
+        <label style="font-size:11px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:8px">Presenças (confirme quem compareceu)</label>
+        <div id="ata-pres-list"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-g" onclick="closeModal('modal-ata')">Cancelar</button>
+      <button class="btn btn-grn" onclick="salvarAta()">Salvar ATA</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-membro">
+  <div class="modal">
+    <div class="modal-head"><h3 id="modal-memb-title">Gerenciar membro</h3><button class="modal-close" onclick="closeModal('modal-membro')">✕</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Nome completo</label><input type="text" id="mb-nome" placeholder="Nome completo"></div>
+      <div class="field"><label>E-mail institucional</label><input type="email" id="mb-email" placeholder="nome@ifro.edu.br"></div>
+      <div class="g2">
+        <div class="field"><label>Grupo</label>
+          <select id="mb-grupo">
+            <option value="samauma">🌳 Samaúma</option>
+            <option value="castanheira">🌰 Castanheira</option>
+            <option value="seringueira">🍃 Seringueira</option>
+            <option value="">— Sem grupo —</option>
+          </select>
+        </div>
+        <div class="field"><label>Função</label><input type="text" id="mb-funcao" placeholder="Prof. Informática"></div>
+      </div>
+      <div class="field"><label>Cargo / Papel na comissão</label><input type="text" id="mb-cargo" placeholder="NDE, Presidente..."></div>
+      <div class="info-box" id="mb-senha-info">A senha padrão <strong>ppc@2026</strong> será enviada. O membro deve alterar ao primeiro acesso.</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-g" onclick="closeModal('modal-membro')">Cancelar</button>
+      <button class="btn btn-p" id="mb-save-btn" onclick="salvarMembro()">Cadastrar membro</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-senha">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-head"><h3>Alterar senha</h3><button class="modal-close" onclick="closeModal('modal-senha')">✕</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Senha atual</label><input type="password" id="pw-atual" placeholder="••••••••"></div>
+      <div class="field"><label>Nova senha</label><input type="password" id="pw-nova" placeholder="Mínimo 6 caracteres"></div>
+      <div class="field"><label>Confirmar nova senha</label><input type="password" id="pw-conf" placeholder="Repita a nova senha"></div>
+      <div class="amsg err" id="pw-err"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-g" onclick="closeModal('modal-senha')">Cancelar</button>
+      <button class="btn btn-p" onclick="alterarSenha()">Alterar senha</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+// ════════════════════════════════════════════════════════════
+// CONSTANTES E DADOS
+// ════════════════════════════════════════════════════════════
+const SENHA_PADRAO = 'ppc@2026';
+
+const GRUPOS_INFO = {
+  samauma:    {nome:'Samaúma',    emoji:'🌳', horario:'Quarta-feira · 16:00–17:00', cor:'sam', desc:'Foco pedagógico'},
+  castanheira:{nome:'Castanheira',emoji:'🌰', horario:'Quinta-feira · 10:00–11:00', cor:'cas', desc:'Ementas e matriz curricular'},
+  seringueira:{nome:'Seringueira',emoji:'🍃', horario:'Quinta-feira · 15:00–16:00', cor:'ser', desc:'Gestão, biblioteca e extensão'},
+};
+
+const MEMBROS_PADRAO = [
+  {nome:'Neemias Ferreira Hitotuzi',  email:'neemias.hitotuzi@ifro.edu.br', grupo:'samauma',    funcao:'Prof. Informática',              cargo:'Presidente da Comissão',       role:'presidente'},
+  {nome:'Rosangela C. C. Schmidt',    email:'rosangela.schmidt@ifro.edu.br', grupo:'samauma',    funcao:'Pedagoga',                       cargo:'Seções pedagógicas 2.5, 3.1–3.7'},
+  {nome:'Juliano C. G. de Melo',      email:'juliano.melo@ifro.edu.br',      grupo:'samauma',    funcao:'Prof. Informática',              cargo:'NDE — Ementas TI'},
+  {nome:'Marcus Vinicius C. Morro',   email:'marcus.morro@ifro.edu.br',      grupo:'samauma',    funcao:'Prof. Matemática / Repr. DEPESP',cargo:'Seção 3.10'},
+  {nome:'Geane da Silva Tavares',     email:'geane.tavares@ifro.edu.br',     grupo:'castanheira',funcao:'Profa. Informática',             cargo:'NDE — Ementas TI'},
+  {nome:'Paulo Lacerda da Silva',     email:'paulo.lacerda@ifro.edu.br',     grupo:'castanheira',funcao:'Prof. Informática',              cargo:'NDE — Ementas TI'},
+  {nome:'Levy Matheus Gomes Dias',    email:'levy.dias@ifro.edu.br',         grupo:'castanheira',funcao:'Prof. Informática',              cargo:'NDE — Ementas TI'},
+  {nome:'Valnei de Lima Oliveira',    email:'valnei.oliveira@ifro.edu.br',   grupo:'castanheira',funcao:'Técnico Adm. Assistente',        cargo:'Infraestrutura (6.1)'},
+  {nome:'Wanderson Ribeiro de Oliveira',email:'wanderson.oliveira@ifro.edu.br',grupo:'castanheira',funcao:'Técnico Adm. / Chefe Gabinete',cargo:'Atas e apoio documental'},
+  {nome:'Fernanda Leite Dias',        email:'fernanda.dias@ifro.edu.br',     grupo:'seringueira',funcao:'Bibliotecária',                  cargo:'Seção 6.5, BIB, Referências'},
+  {nome:'Cícero Felix da Silva',      email:'cicero.felix@ifro.edu.br',      grupo:'seringueira',funcao:'Prof. Matemática / Repr. DAPE',  cargo:'Seções 3.7, 5.4'},
+  {nome:'Washington da Silva Batista',email:'washington.batista@ifro.edu.br',grupo:'seringueira',funcao:'Prof. Informática',              cargo:'NDE — Ementas TI, Seções 6.3, 6.4'},
+  {nome:'Josue Marciel da Silva',     email:'josue.silva@ifro.edu.br',       grupo:'seringueira',funcao:'Técnico Adm. / Repr. DEPEX',     cargo:'Seções 3.1.6, 3.9'},
+  {nome:'Marcello Pereira Tamwing',   email:'marcello.tamwing@ifro.edu.br',  grupo:'seringueira',funcao:'Prof. Inglês',                   cargo:'Ementas Inglês Instrumental'},
+  {nome:'Maria Enisia Soares de Souza',email:'maria.enisia@ifro.edu.br',     grupo:'',           funcao:'Profa. Língua Portuguesa',       cargo:'Ementas Português'},
+  {nome:'Thays da Silva Mandu',       email:'thays.mandu@ifro.edu.br',       grupo:'',           funcao:'Profa. Química / Dir. Ensino',   cargo:'Diretora de Ensino'},
+];
+
+const SECOES_BASE = [
+  {n:'—',  t:'Capa, equipe, sumário, listas',                          r:'Neemias Ferreira Hitotuzi',                  g:'samauma',     f:'F1',p:'Mar/26'},
+  {n:'1',  t:'Identificação da instituição',                           r:'Neemias Ferreira Hitotuzi',                  g:'samauma',     f:'F1',p:'Mar/26'},
+  {n:'2.1',t:'Identificação do curso',                                 r:'Neemias Ferreira Hitotuzi',                  g:'samauma',     f:'F1',p:'Mar/26'},
+  {n:'2.2',t:'Total de vagas e periodicidade',                         r:'Neemias Ferreira Hitotuzi',                  g:'samauma',     f:'F1',p:'Mar/26'},
+  {n:'2.3',t:'Justificativa — contexto regional e demanda',            r:'Neemias + Profs. TI (NDE)',                  g:'samauma',     f:'F1',p:'30/abr'},
+  {n:'2.4',t:'Público-alvo e formas de ingresso',                      r:'Neemias Ferreira Hitotuzi',                  g:'samauma',     f:'F1',p:'Mar/26'},
+  {n:'2.5',t:'Objetivos geral e específicos do curso',                 r:'Rosangela C. C. Schmidt',                    g:'samauma',     f:'F1',p:'30/abr'},
+  {n:'2.6',t:'Perfil profissional do egresso',                         r:'NDE — Profs. TI',                            g:'castanheira', f:'F1',p:'31/mar'},
+  {n:'3.1',t:'Concepção metodológica',                                 r:'Rosangela C. C. Schmidt',                    g:'samauma',     f:'F2',p:'Jun/26'},
+  {n:'3.1.1',t:'Estratégias de ensino previstas',                      r:'Rosangela C. C. Schmidt',                    g:'samauma',     f:'F2',p:'Jun/26'},
+  {n:'3.1.2',t:'Transversalidade no currículo',                        r:'Rosangela C. C. Schmidt',                    g:'samauma',     f:'F2',p:'Jun/26'},
+  {n:'3.1.3',t:'Acompanhamento pedagógico',                            r:'Rosangela C. C. Schmidt',                    g:'samauma',     f:'F2',p:'Jun/26'},
+  {n:'3.1.4',t:'Flexibilização curricular',                            r:'Rosangela C. C. Schmidt',                    g:'samauma',     f:'F2',p:'Jun/26'},
+  {n:'3.1.5',t:'Atividades não presenciais (até 40%)',                 r:'Rosangela C. C. Schmidt',                    g:'samauma',     f:'F2',p:'Jun/26'},
+  {n:'3.1.6',t:'Curricularização da extensão (mín. 10%)',              r:'Josue Marciel da Silva',                     g:'seringueira', f:'F2',p:'Jun/26'},
+  {n:'3.2', t:'Estrutura curricular — Matriz',                         r:'NDE — Profs. TI',                            g:'castanheira', f:'F1',p:'30/abr'},
+  {n:'3.3', t:'Avaliação do ensino-aprendizagem',                      r:'Rosangela C. C. Schmidt',                    g:'samauma',     f:'F2',p:'Jun/26'},
+  {n:'3.4', t:'Prática profissional e estágio',                        r:'NDE — Profs. TI',                            g:'castanheira', f:'F2',p:'Jun/26'},
+  {n:'3.5', t:'Trabalho de Conclusão de Curso (TCC)',                  r:'NDE — Profs. TI',                            g:'castanheira', f:'F2',p:'Jun/26'},
+  {n:'3.6', t:'Atividades complementares (mín. 200h)',                 r:'NDE — Profs. TI',                            g:'castanheira', f:'F2',p:'Jun/26'},
+  {n:'3.7', t:'Inclusão educacional e apoio ao discente',              r:'Cícero Felix da Silva',                      g:'seringueira', f:'F2',p:'Jun/26'},
+  {n:'3.8', t:'TICs no ensino',                                        r:'NDE — Profs. TI',                            g:'castanheira', f:'F2',p:'Jun/26'},
+  {n:'3.9', t:'Acompanhamento de egressos',                            r:'Josue Marciel da Silva',                     g:'seringueira', f:'F3',p:'Jul/26'},
+  {n:'3.10',t:'Integração ensino, pesquisa e extensão',                r:'Marcus Vinicius C. Morro',                   g:'samauma',     f:'F3',p:'Jul/26'},
+  {n:'3.11',t:'Certificação (conclusão e intermediária)',               r:'Neemias Ferreira Hitotuzi',                  g:'samauma',     f:'F3',p:'Jul/26'},
+  {n:'4',   t:'Equipe docente — formação, titulação',                  r:'Neemias Ferreira Hitotuzi',                  g:'seringueira', f:'F2',p:'Jun/26'},
+  {n:'5.1', t:'Coordenação do curso',                                   r:'Neemias Ferreira Hitotuzi',                  g:'seringueira', f:'F3',p:'Jul/26'},
+  {n:'5.2', t:'Colegiado de curso',                                     r:'Neemias Ferreira Hitotuzi',                  g:'seringueira', f:'F3',p:'Jul/26'},
+  {n:'5.3', t:'Núcleo Docente Estruturante (NDE)',                      r:'Neemias Ferreira Hitotuzi',                  g:'seringueira', f:'F3',p:'Jul/26'},
+  {n:'5.4', t:'Assessoramento ao curso (DAE, DEPEX, DEPESP)',          r:'Cícero Felix da Silva',                      g:'seringueira', f:'F3',p:'Jul/26'},
+  {n:'6.1', t:'Infraestrutura física',                                  r:'Valnei de Lima Oliveira',                    g:'castanheira', f:'F2',p:'Jun/26'},
+  {n:'6.2', t:'Acessibilidade',                                         r:'Cícero Felix da Silva',                      g:'seringueira', f:'F2',p:'Jun/26'},
+  {n:'6.3', t:'Infraestrutura de informática',                          r:'Washington da Silva Batista',                g:'seringueira', f:'F2',p:'Jun/26'},
+  {n:'6.4', t:'Laboratórios didáticos',                                 r:'Washington da Silva Batista',                g:'seringueira', f:'F2',p:'Jun/26'},
+  {n:'6.5', t:'Biblioteca — espaço físico e acervo',                    r:'Fernanda Leite Dias',                        g:'seringueira', f:'F2',p:'Jun/26'},
+  {n:'8',   t:'Base legal',                                             r:'Neemias Ferreira Hitotuzi',                  g:'samauma',     f:'F1',p:'Mar/26'},
+  {n:'9',   t:'Referências bibliográficas do PPC',                      r:'Neemias Ferreira Hitotuzi',                  g:'seringueira', f:'F3',p:'Ago/26'},
+  {n:'10',  t:'Ementas — todos os componentes curriculares',            r:'Profs. TI + Marcello + Maria Enisia',        g:'castanheira', f:'F2',p:'30/mai'},
+  {n:'BIB', t:'Bibliografias básica e complementar',                    r:'Fernanda Leite Dias',                        g:'seringueira', f:'F2',p:'30/mai'},
+];
+
+const STATUS0 = {'—':'done','1':'done','2.1':'done','2.2':'done','2.4':'done','8':'done',
+  '2.3':'review','2.5':'review','9':'review','2.6':'progress','3.2':'progress','4':'progress'};
+
+const DIAS_SEMANA = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+// ════════════════════════════════════════════════════════════
+// SUPABASE REST API
+// ════════════════════════════════════════════════════════════
+let SB_URL='', SB_KEY='', SB_TOKEN='';
+let curUser=null, curProfile=null;
+let secsData={}, pollTmr=null, unreadMsgs=0;
+let editingReuniao=null, editingMembro=null;
+
+async function sbFetch(path, opts={}) {
+  const headers = {'apikey':SB_KEY,'Authorization':'Bearer '+(SB_TOKEN||SB_KEY),'Content-Type':'application/json',...(opts.headers||{})};
+  const res = await fetch(SB_URL+path, {method:opts.method||'GET', headers, body:opts.body?JSON.stringify(opts.body):undefined});
+  const text = await res.text();
+  let data=null; try{data=JSON.parse(text);}catch(e){}
+  return {data, error:res.ok?null:data, ok:res.ok, status:res.status};
+}
+const db = {
+  sel:(t,q='')=>sbFetch(`/rest/v1/${t}?${q}`),
+  upsert:(t,b)=>sbFetch(`/rest/v1/${t}`,{method:'POST',body:b,headers:{'Prefer':'resolution=merge-duplicates,return=representation'}}),
+  insert:(t,b)=>sbFetch(`/rest/v1/${t}`,{method:'POST',body:b,headers:{'Prefer':'return=representation'}}),
+  update:(t,q,b)=>sbFetch(`/rest/v1/${t}?${q}`,{method:'PATCH',body:b,headers:{'Prefer':'return=representation'}}),
+  del:(t,q)=>sbFetch(`/rest/v1/${t}?${q}`,{method:'DELETE'}),
+};
+async function sbSignIn(email,pass){
+  const r=await fetch(SB_URL+'/auth/v1/token?grant_type=password',{method:'POST',headers:{'apikey':SB_KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
+  const d=await r.json(); return r.ok?{data:d}:{error:d};
+}
+async function sbSignUp(email,pass,name){
+  const r=await fetch(SB_URL+'/auth/v1/signup',{method:'POST',headers:{'apikey':SB_KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password:pass,data:{full_name:name}})});
+  const d=await r.json(); return r.ok?{data:d}:{error:d};
+}
+async function sbGetUser(){
+  const r=await fetch(SB_URL+'/auth/v1/user',{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_TOKEN}});
+  if(!r.ok) return {error:true}; return {data:await r.json()};
+}
+async function sbUpdatePassword(newPass){
+  const r=await fetch(SB_URL+'/auth/v1/user',{method:'PUT',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_TOKEN,'Content-Type':'application/json'},body:JSON.stringify({password:newPass})});
+  const d=await r.json(); return r.ok?{data:d}:{error:d};
+}
+
+// ════════════════════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════════════════════
+function saveConfig(){
+  const url=document.getElementById('cfg-url').value.trim().replace(/\/$/,'');
+  const key=document.getElementById('cfg-key').value.trim();
+  hideEl('cfg-err');
+  if(!url||!key){showErr('cfg-err','Preencha os dois campos.');return;}
+  if(!url.includes('.supabase.co')){showErr('cfg-err','URL inválida — deve incluir .supabase.co');return;}
+  if(!key.startsWith('eyJ')){showErr('cfg-err','Chave inválida.');return;}
+  SB_URL=url; SB_KEY=key;
+  localStorage.setItem('sb_url',url); localStorage.setItem('sb_key',key);
+  showScreen('scr-auth');
+}
+
+// ════════════════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════════════════
+function swTab(t){
+  document.getElementById('t-login').style.display=t==='login'?'block':'none';
+  document.getElementById('t-signup').style.display=t==='signup'?'block':'none';
+  document.querySelectorAll('.tab2').forEach((el,i)=>el.classList.toggle('active',(i===0&&t==='login')||(i===1&&t==='signup')));
+  hideEl('auth-err'); hideEl('auth-ok');
+}
+async function doLogin(){
+  const email=v('l-em'), pass=v('l-pw');
+  const btn=document.getElementById('l-btn');
+  if(!email||!pass){showErr('auth-err','Preencha e-mail e senha.');return;}
+  btn.disabled=true; btn.textContent='Entrando...';
+  const {data,error}=await sbSignIn(email,pass);
+  btn.disabled=false; btn.textContent='Entrar';
+  if(error){showErr('auth-err',trErr(error));return;}
+  SB_TOKEN=data.access_token; localStorage.setItem('sb_token',SB_TOKEN);
+  await loadProfileAndEnter(data.user);
+}
+async function doSignup(){
+  const name=v('s-nm'), email=v('s-em'), pass=v('s-pw');
+  const btn=document.getElementById('s-btn');
+  if(!name||!email||!pass){showErr('auth-err','Preencha todos os campos.');return;}
+  if(pass.length<6){showErr('auth-err','Senha deve ter ao menos 6 caracteres.');return;}
+  btn.disabled=true; btn.textContent='Criando...';
+  const {data,error}=await sbSignUp(email,pass,name);
+  btn.disabled=false; btn.textContent='Criar conta';
+  if(error){showErr('auth-err',trErr(error));return;}
+  if(data?.user) await db.upsert('profiles',{id:data.user.id,full_name:name,email,role:'membro',grupo:'',funcao:'',cargo:'',senha_padrao:false});
+  showEl('auth-ok'); document.getElementById('auth-ok').textContent='✓ Conta criada! Faça login.';
+  swTab('login'); document.getElementById('l-em').value=email;
+}
+async function doLogout(){
+  await fetch(SB_URL+'/auth/v1/logout',{method:'POST',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_TOKEN}});
+  localStorage.removeItem('sb_token'); SB_TOKEN=''; curUser=null; curProfile=null;
+  if(pollTmr) clearInterval(pollTmr);
+  document.getElementById('app').style.display='none';
+  showScreen('scr-auth');
+}
+function trErr(e){
+  const m=JSON.stringify(e);
+  if(m.includes('Invalid login')||m.includes('invalid_grant')) return 'E-mail ou senha incorretos.';
+  if(m.includes('already registered')) return 'E-mail já cadastrado.';
+  if(m.includes('Password should')) return 'Senha deve ter ao menos 6 caracteres.';
+  return 'Erro ao autenticar. Tente novamente.';
+}
+
+// ════════════════════════════════════════════════════════════
+// CARREGAR PERFIL E ENTRAR
+// ════════════════════════════════════════════════════════════
+async function loadProfileAndEnter(user){
+  curUser=user;
+  const {data}=await db.sel('profiles',`id=eq.${user.id}&select=*`);
+  if(data&&data[0]) curProfile=data[0];
+  else {
+    const name=user.user_metadata?.full_name||user.email.split('@')[0];
+    await db.upsert('profiles',{id:user.id,full_name:name,email:user.email,role:'membro',grupo:'',senha_padrao:false});
+    curProfile={full_name:name,email:user.email,role:'membro',grupo:'',senha_padrao:false};
+  }
+  enterApp();
+}
+function isPresident(){return curProfile?.role==='presidente';}
+
+function enterApp(){
+  document.getElementById('scr-config').style.display='none';
+  document.getElementById('scr-auth').style.display='none';
+  document.getElementById('app').style.display='block';
+  const name=curProfile.full_name||'Usuário';
+  const ini=name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+  document.getElementById('sb-av').textContent=ini;
+  document.getElementById('sb-name').textContent=name.split(' ').slice(0,2).join(' ');
+  const rb=document.getElementById('sb-role-badge');
+  if(isPresident()){rb.textContent='Presidente';rb.className='sl-role pres';}
+  else{rb.textContent=curProfile.grupo?GRUPOS_INFO[curProfile.grupo]?.nome||'Membro':'Membro';rb.className='sl-role mem';}
+  document.getElementById('rtb').style.display='inline-flex';
+  buildNav();
+  loadSections().then(()=>{
+    goto(isPresident()?'dash-pres':'dash-mem');
+    if(curProfile.senha_padrao) setTimeout(()=>showToast('⚠ Use o menu para alterar sua senha padrão.',5000),1500);
+  });
+  startPolling();
+}
+
+// ════════════════════════════════════════════════════════════
+// NAVEGAÇÃO
+// ════════════════════════════════════════════════════════════
+const PRES_VIEWS = [
+  {id:'dash-pres',   ic:'◼',  label:'Dashboard geral',    section:'Principal'},
+  {id:'sections',    ic:'☰',  label:'Seções do PPC',       nb:'sec-nb'},
+  {id:'members',     ic:'●',  label:'Membros'},
+  {id:'messages',    ic:'✉',  label:'Mensagens',           nb:'msg-nb'},
+  {id:'schedule',    ic:'📅', label:'Cronograma',          section:'Ferramentas'},
+  {id:'atas',        ic:'📋', label:'Atas de reunião'},
+  {id:'settings',    ic:'⚙',  label:'Configurações'},
+];
+const MEM_VIEWS = [
+  {id:'dash-mem',    ic:'◼',  label:'Meu dashboard',       section:'Principal'},
+  {id:'my-tasks',    ic:'☰',  label:'Minhas tarefas'},
+  {id:'overview',    ic:'📊', label:'Visão geral'},
+  {id:'messages',    ic:'✉',  label:'Mensagens',           nb:'msg-nb'},
+  {id:'my-schedule', ic:'📅', label:'Minhas reuniões',      section:'Grupo'},
+  {id:'ata-sign',    ic:'📋', label:'Assinar ATA'},
+  {id:'settings',    ic:'⚙',  label:'Configurações',       section:'Conta'},
+];
+
+let curView='';
+function buildNav(){
+  const views=isPresident()?PRES_VIEWS:MEM_VIEWS;
+  let html=''; let curSection='';
+  views.forEach(v=>{
+    if(v.section){html+=`<div class="ns">${v.section}</div>`; curSection=v.section;}
+    html+=`<div class="ni" id="ni-${v.id}" onclick="goto('${v.id}')">
+      <span class="ic">${v.ic}</span>${v.label}
+      ${v.nb?`<span class="nb" id="${v.nb}" style="display:none">0</span>`:''}
+    </div>`;
+  });
+  document.getElementById('snav').innerHTML=html;
+}
+
+const VIEW_TITLES = {
+  'dash-pres':'Dashboard — Presidente','sections':'Seções do PPC','members':'Membros da Comissão',
+  'messages':'Mensagens e Avisos','schedule':'Cronograma de Reuniões','atas':'Atas de Reunião',
+  'settings':'Configurações','dash-mem':'Meu Dashboard','my-tasks':'Minhas Tarefas',
+  'overview':'Visão Geral do PPC','my-schedule':'Minhas Reuniões','ata-sign':'Assinar ATA',
+};
+
+async function goto(id){
+  curView=id;
+  document.getElementById('ptitle').textContent=VIEW_TITLES[id]||id;
+  document.querySelectorAll('.ni').forEach(n=>n.classList.toggle('active',n.id===`ni-${id}`));
+  const ca=document.getElementById('content-area');
+  const ta=document.getElementById('topbar-actions');
+  ca.innerHTML='<div class="ld"><div class="sp"></div>Carregando...</div>';
+  ta.innerHTML='';
+  closeSB();
+  switch(id){
+    case 'dash-pres':  await renderDashPres(ca,ta); break;
+    case 'dash-mem':   await renderDashMem(ca,ta);  break;
+    case 'sections':   await renderSections(ca,ta); break;
+    case 'my-tasks':   await renderMyTasks(ca,ta);  break;
+    case 'overview':   await renderOverview(ca,ta); break;
+    case 'members':    await renderMembers(ca,ta);  break;
+    case 'messages':   await renderMessages(ca,ta); break;
+    case 'schedule':   await renderSchedule(ca,ta); break;
+    case 'my-schedule':await renderMySchedule(ca,ta); break;
+    case 'atas':       await renderAtas(ca,ta);     break;
+    case 'ata-sign':   await renderAtaSign(ca,ta);  break;
+    case 'settings':   renderSettings(ca,ta);        break;
+    default: ca.innerHTML='<div class="empty">Em desenvolvimento.</div>';
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// SETUP INICIAL (Presidente)
+// ════════════════════════════════════════════════════════════
+async function setupInicial(){
+  showToast('⚙ Iniciando setup...'); 
+  // 1. Seções
+  const secsRows=SECOES_BASE.map(s=>({num:s.n,titulo:s.t,responsavel:s.r,co_responsavel:'',fase:s.f,prazo:s.p,grupo:s.g,status:STATUS0[s.n]||'todo',updated_by:'Sistema',updated_at:new Date().toISOString()}));
+  await db.upsert('secoes',secsRows);
+  // 2. Reuniões (gerar próximas 12 semanas)
+  await gerarReunioesIniciais();
+  showToast('✅ Setup concluído! Seções e cronograma carregados.');
+  await loadSections();
+  goto('dash-pres');
+}
+
+async function gerarReunioesIniciais(){
+  const hoje=new Date('2026-03-25');
+  const reunioesRows=[];
+  let num=1;
+  for(let w=0;w<12;w++){
+    const base=new Date(hoje); base.setDate(base.getDate()+(w*7));
+    // Samaúma: Quarta 16h
+    const qua=new Date(base); const diffQua=(3-qua.getDay()+7)%7; qua.setDate(qua.getDate()+diffQua);
+    reunioesRows.push({grupo:'samauma',numero:num,data_reuniao:fmt_date(qua),hora_inicio:'16:00',hora_fim:'17:00',local_reuniao:'Sala de Reuniões — Campus Guajará-Mirim',pauta:`Reunião nº ${num} — Grupo Samaúma`,status:'agendada'});
+    // Castanheira: Quinta 10h
+    const qui1=new Date(base); const diffQui=(4-qui1.getDay()+7)%7; qui1.setDate(qui1.getDate()+diffQui);
+    reunioesRows.push({grupo:'castanheira',numero:num,data_reuniao:fmt_date(qui1),hora_inicio:'10:00',hora_fim:'11:00',local_reuniao:'Sala de Reuniões — Campus Guajará-Mirim',pauta:`Reunião nº ${num} — Grupo Castanheira`,status:'agendada'});
+    // Seringueira: Quinta 15h
+    const qui2=new Date(qui1);
+    reunioesRows.push({grupo:'seringueira',numero:num,data_reuniao:fmt_date(qui2),hora_inicio:'15:00',hora_fim:'16:00',local_reuniao:'Sala de Reuniões — Campus Guajará-Mirim',pauta:`Reunião nº ${num} — Grupo Seringueira`,status:'agendada'});
+    num++;
+  }
+  await db.upsert('reunioes',reunioesRows);
+}
+
+function fmt_date(d){return d.toISOString().split('T')[0];}
+
+// ════════════════════════════════════════════════════════════
+// CARREGAR SEÇÕES
+// ════════════════════════════════════════════════════════════
+async function loadSections(){
+  const {data}=await db.sel('secoes','select=*&order=num');
+  if(data&&data.length){secsData={}; data.forEach(r=>secsData[r.num]=r);}
+  else{secsData={}; SECOES_BASE.forEach(s=>secsData[s.n]={num:s.n,status:STATUS0[s.n]||'todo',responsavel:s.r,grupo:s.g,titulo:s.t,prazo:s.p});}
+}
+
+// ════════════════════════════════════════════════════════════
+// DASHBOARD — PRESIDENTE
+// ════════════════════════════════════════════════════════════
+async function renderDashPres(ca, ta){
+  const all=SECOES_BASE.map(s=>secsData[s.n]?.status||STATUS0[s.n]||'todo');
+  const done=all.filter(x=>x==='done').length;
+  const prog=all.filter(x=>x==='progress').length;
+  const rev=all.filter(x=>x==='review').length;
+  const todo=all.filter(x=>x==='todo').length;
+  const pct=Math.round((done/SECOES_BASE.length)*100);
+
+  // Buscar próximas reuniões e mensagens
+  const today=fmt_date(new Date());
+  const [{data:prox},{data:msgs}]=await Promise.all([
+    db.sel('reunioes',`status=eq.agendada&data_reuniao=gte.${today}&order=data_reuniao.asc&limit=3`),
+    db.sel('mensagens','order=created_at.desc&limit=5'),
+  ]);
+
+  ta.innerHTML=`<button class="btn btn-p" onclick="setupInicial()" title="Recarregar seções e cronograma">⚙ Setup</button>
+    <button class="btn btn-g" onclick="openModal('modal-msg')">+ Mensagem</button>`;
+
+  // Alertas de prazo
+  const urgentes=SECOES_BASE.filter(s=>{
+    const st=secsData[s.n]?.status||STATUS0[s.n]||'todo';
+    return ['Mar/26','31/mar','30/abr'].includes(s.p)&&st!=='done';
+  });
+
+  ca.innerHTML=`
+    <p class="ph">Olá, ${curProfile.full_name?.split(' ')[0]}! <span class="tag tag-pres">Presidente</span></p>
+    <p class="ps">Portaria 1463 · 13/mar/2026 · 180 dias · Prazo final: set/2026</p>
+    ${curProfile.senha_padrao?`<div class="alert-box">⚠ Você ainda usa a senha padrão. <a href="#" onclick="goto('settings')" style="color:var(--warn);font-weight:700">Altere agora</a> nas configurações.</div>`:''}
+    <div class="mets">
+      <div class="mc acc"><div class="ml">Total</div><div class="mv">39</div><div class="ms">seções</div></div>
+      <div class="mc grn"><div class="ml">Concluídas</div><div class="mv" id="d-done">${done}</div><div class="ms">prontas</div></div>
+      <div class="mc warn"><div class="ml">Em andamento</div><div class="mv">${prog}</div><div class="ms">em curso</div></div>
+      <div class="mc red"><div class="ml">Revisão</div><div class="mv">${rev}</div><div class="ms">pendentes</div></div>
+    </div>
+    <div class="pw">
+      <div class="pw-h"><span class="pw-t">Progresso geral do PPC</span><span class="pw-p">${pct}%</span></div>
+      <div class="pbar"><div class="pfill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="g2">
+      <div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:10px">⚠ Prazos próximos (${urgentes.length})</div>
+        ${urgentes.slice(0,4).map(s=>`
+          <div class="task-mine">
+            <div class="tm-num">Seção ${s.n} · ${s.p}</div>
+            <div class="tm-tit">${s.t}</div>
+            <div class="tm-resp">${s.r.split('(')[0].split('+')[0].trim().substring(0,40)}</div>
+          </div>`).join('')||`<div class="empty" style="padding:20px">✓ Sem urgências!</div>`}
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:10px">📅 Próximas reuniões</div>
+        ${(prox||[]).map(r=>{
+          const g=GRUPOS_INFO[r.grupo]||{}; const dt=new Date(r.data_reuniao+'T12:00:00');
+          return `<div class="reun-card" style="padding:10px 12px;margin-bottom:6px">
+            <div class="reun-data"><div class="rd-dia">${dt.getDate()}</div><div class="rd-mes">${MESES[dt.getMonth()]}</div><div class="rd-dsm">${DIAS_SEMANA[dt.getDay()]}</div></div>
+            <div class="reun-info">
+              <div class="ri-grp" style="color:var(--${g.cor})">${g.emoji||''} ${g.nome||r.grupo}</div>
+              <div class="ri-hor">${r.hora_inicio}–${r.hora_fim}</div>
+              <div class="ri-pau" style="font-size:11px">${r.pauta?.substring(0,60)||''}</div>
+            </div>
+          </div>`;
+        }).join('')||`<div class="empty" style="padding:20px">Nenhuma reunião agendada.</div>`}
+        <button class="btn btn-g" style="width:100%;margin-top:4px;font-size:11px" onclick="goto('schedule')">Ver cronograma completo →</button>
+      </div>
+    </div>
+    <div style="font-size:12px;font-weight:700;margin:14px 0 8px">📊 Status por grupo</div>
+    <div class="g2" style="grid-template-columns:repeat(3,1fr)">
+      ${['samauma','castanheira','seringueira'].map(gk=>{
+        const g=GRUPOS_INFO[gk]; const gsecs=SECOES_BASE.filter(s=>s.g===gk);
+        const gd=gsecs.filter(s=>(secsData[s.n]?.status||STATUS0[s.n]||'todo')==='done').length;
+        const gp=Math.round((gd/Math.max(gsecs.length,1))*100);
+        return `<div class="card">
+          <div class="ch" style="cursor:default;padding:11px 13px">
+            <span style="font-size:16px">${g.emoji}</span>
+            <div class="si"><div class="tt">${g.nome}</div><div class="st">${gsecs.length} seções · ${gd} prontas</div></div>
+          </div>
+          <div style="padding:8px 13px 12px">
+            <div class="pbar"><div class="pfill" style="width:${gp}%"></div></div>
+            <div style="text-align:right;font-size:10px;color:var(--tx3);margin-top:4px;font-family:'DM Mono',monospace">${gp}%</div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="font-size:12px;font-weight:700;margin:14px 0 8px">✉ Avisos recentes</div>
+    ${(msgs||[]).slice(0,3).map(m=>`
+      <div class="msg-item ${m.tipo}">
+        <div class="msg-head">
+          <span class="tipo-badge tipo-${m.tipo}">${{aviso:'📢 Aviso',alerta:'⚠️ Alerta',urgente:'🚨 Urgente',info:'ℹ️ Info'}[m.tipo]||m.tipo}</span>
+          <span class="msg-assunto">${esc(m.assunto)}</span>
+          <span class="msg-time">${timeAgo(m.created_at)}</span>
+        </div>
+        <div class="msg-corpo">${esc(m.corpo)}</div>
+      </div>`).join('')||`<div class="empty" style="padding:16px">Nenhum aviso enviado ainda.</div>`}
+  `;
+}
+
+// ════════════════════════════════════════════════════════════
+// DASHBOARD — MEMBRO
+// ════════════════════════════════════════════════════════════
+async function renderDashMem(ca, ta){
+  const myName=curProfile.full_name||'';
+  const myGrupo=curProfile.grupo||'';
+  const myFirst=myName.split(' ')[0];
+  const mySecs=SECOES_BASE.filter(s=>s.r.toLowerCase().includes(myFirst.toLowerCase()));
+  const myDone=mySecs.filter(s=>(secsData[s.n]?.status||STATUS0[s.n]||'todo')==='done').length;
+  const myProg=mySecs.filter(s=>(secsData[s.n]?.status||STATUS0[s.n]||'todo')==='progress').length;
+  const myTodo=mySecs.filter(s=>(secsData[s.n]?.status||STATUS0[s.n]||'todo')==='todo').length;
+  const myPct=Math.round((myDone/Math.max(mySecs.length,1))*100);
+
+  // Mensagens não lidas
+  const {data:msgs}=await db.sel('mensagens',`order=created_at.desc&limit=4`);
+
+  // Próxima reunião do meu grupo
+  const today=fmt_date(new Date());
+  let proxReun=null;
+  if(myGrupo){
+    const {data:prox}=await db.sel('reunioes',`grupo=eq.${myGrupo}&status=eq.agendada&data_reuniao=gte.${today}&order=data_reuniao.asc&limit=1`);
+    if(prox&&prox[0]) proxReun=prox[0];
+  }
+
+  const g=GRUPOS_INFO[myGrupo];
+  ca.innerHTML=`
+    <p class="ph">Olá, ${myFirst}!</p>
+    <p class="ps">${g?`${g.emoji} Grupo ${g.nome} · ${g.horario}`:'Membro da Comissão PPC · IFRO Guajará-Mirim'}</p>
+    ${curProfile.senha_padrao?`<div class="alert-box">⚠ Você ainda usa a senha padrão. <a href="#" onclick="goto('settings')" style="color:var(--warn);font-weight:700">Altere agora</a>.</div>`:''}
+    <div class="mets">
+      <div class="mc acc"><div class="ml">Minhas seções</div><div class="mv">${mySecs.length}</div><div class="ms">atribuídas</div></div>
+      <div class="mc grn"><div class="ml">Prontas</div><div class="mv">${myDone}</div><div class="ms">concluídas</div></div>
+      <div class="mc warn"><div class="ml">Em andamento</div><div class="mv">${myProg}</div><div class="ms">em curso</div></div>
+      <div class="mc red"><div class="ml">Não iniciadas</div><div class="mv">${myTodo}</div><div class="ms">pendentes</div></div>
+    </div>
+    <div class="pw">
+      <div class="pw-h"><span class="pw-t">Meu progresso</span><span class="pw-p">${myPct}%</span></div>
+      <div class="pbar"><div class="pfill" style="width:${myPct}%"></div></div>
+    </div>
+    <div class="g2">
+      <div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:10px">📌 Minhas próximas entregas</div>
+        ${mySecs.filter(s=>(secsData[s.n]?.status||STATUS0[s.n]||'todo')!=='done').slice(0,4).map(s=>`
+          <div class="task-mine">
+            <div class="tm-num">Seção ${s.n} · ${s.p}</div>
+            <div class="tm-tit">${s.t}</div>
+            <div class="tm-foot">
+              ${statusBadge(secsData[s.n]?.status||STATUS0[s.n]||'todo')}
+              <button class="btn btn-p" style="padding:4px 10px;font-size:10px" onclick="goto('my-tasks')">Ver</button>
+            </div>
+          </div>`).join('')||`<div class="empty" style="padding:20px">✓ Tudo em dia!</div>`}
+      </div>
+      <div>
+        ${proxReun?`
+          <div style="font-size:12px;font-weight:700;margin-bottom:10px">📅 Próxima reunião</div>
+          <div class="card">
+            <div class="ch" style="cursor:default;background:var(--${g?.cor}-l)||var(--acc-xl)">
+              <span style="font-size:22px">${g?.emoji||'📅'}</span>
+              <div class="si">
+                <div class="tt">${g?.nome||'Reunião'}</div>
+                <div class="st">${new Date(proxReun.data_reuniao+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})} · ${proxReun.hora_inicio}–${proxReun.hora_fim}</div>
+              </div>
+            </div>
+            <div class="cb open" style="padding:11px 13px;font-size:12px">
+              <strong>Local:</strong> ${proxReun.local_reuniao}<br>
+              ${proxReun.pauta?`<strong>Pauta:</strong> ${proxReun.pauta}`:''}
+            </div>
+          </div>`:'<div class="empty" style="padding:20px">📅 Sem reunião agendada.</div>'}
+        <div style="font-size:12px;font-weight:700;margin:12px 0 8px">✉ Avisos recentes</div>
+        ${(msgs||[]).slice(0,3).map(m=>`
+          <div class="msg-item ${m.tipo}">
+            <div class="msg-head"><span class="tipo-badge tipo-${m.tipo}">${m.tipo}</span><span class="msg-assunto" style="font-size:12px">${esc(m.assunto)}</span><span class="msg-time">${timeAgo(m.created_at)}</span></div>
+            <div class="msg-corpo">${esc(m.corpo.substring(0,100))}${m.corpo.length>100?'…':''}</div>
+          </div>`).join('')||`<div class="empty" style="padding:10px">Sem avisos.</div>`}
+      </div>
+    </div>
+  `;
+}
+
+// ════════════════════════════════════════════════════════════
+// SEÇÕES — PRESIDENTE (completo)
+// ════════════════════════════════════════════════════════════
+let secFilter='all', secQuery='';
+async function renderSections(ca, ta){
+  ta.innerHTML=`<button class="btn btn-p" onclick="setupInicial()">↻ Recarregar</button>`;
+  ca.innerHTML=`
+    <p class="ph">Seções do PPC</p>
+    <p class="ps">39 seções · Resolução nº 34/CONSUP/IFRO · Clique para expandir e editar</p>
+    <div class="sb"><span style="color:var(--tx3)">🔍</span><input type="text" placeholder="Buscar seção ou responsável..." oninput="secQuery=this.value;renderSecList()"></div>
+    <div class="fr">
+      ${['all','done','progress','review','todo'].map(f=>`<div class="fc ${secFilter===f?'active':''}" onclick="secFilter='${f}';document.querySelectorAll('.fr .fc').forEach(e=>e.classList.remove('active'));this.classList.add('active');renderSecList()">${{all:'Todas',done:'✓ Prontas',progress:'↗ Em andamento',review:'⚠ Revisão',todo:'○ Não iniciadas'}[f]}</div>`).join('')}
+      ${['samauma','castanheira','seringueira'].map(g=>`<div class="fc" onclick="secFilter='${g}';document.querySelectorAll('.fr .fc').forEach(e=>e.classList.remove('active'));this.classList.add('active');renderSecList()">${GRUPOS_INFO[g].emoji} ${GRUPOS_INFO[g].nome}</div>`).join('')}
+    </div>
+    <div id="sec-list"></div>
+  `;
+  renderSecList();
+}
+
+function renderSecList(){
+  const el=document.getElementById('sec-list'); if(!el) return;
+  const q=secQuery.toLowerCase();
+  const fl=SECOES_BASE.filter(s=>{
+    const st=secsData[s.n]?.status||STATUS0[s.n]||'todo';
+    const mq=!q||s.t.toLowerCase().includes(q)||s.r.toLowerCase().includes(q)||s.n.toLowerCase().includes(q);
+    if(secFilter==='all') return mq;
+    if(['samauma','castanheira','seringueira'].includes(secFilter)) return mq&&s.g===secFilter;
+    return mq&&st===secFilter;
+  });
+  if(!fl.length){el.innerHTML=`<div class="empty">Nenhuma seção encontrada.</div>`;return;}
+  el.innerHTML=fl.map(s=>{
+    const st=secsData[s.n]?.status||STATUS0[s.n]||'todo';
+    const g=GRUPOS_INFO[s.g];
+    return `<div class="card">
+      <div class="ch" onclick="tgCB(this)">
+        <div class="sn">${s.n}</div>
+        <div class="si"><div class="tt">${s.t}</div><div class="st">${s.r.split('(')[0].split('+')[0].trim().substring(0,30)} · ${s.p}</div></div>
+        <div class="cr">
+          ${g?`<span class="badge b${s.g}">${g.emoji} ${g.nome}</span>`:''}
+          ${statusBadge(st, s.n)}
+          <span style="color:var(--tx3);font-size:11px">▼</span>
+        </div>
+      </div>
+      <div class="cb">
+        <div class="dg2">
+          <div class="di"><div class="dl">Responsável</div><div class="dv">${s.r}</div></div>
+          <div class="di"><div class="dl">Grupo</div><div class="dv">${g?g.emoji+' '+g.nome:'—'}</div></div>
+          <div class="di"><div class="dl">Prazo</div><div class="dv">${s.p}</div></div>
+          <div class="di"><div class="dl">Status</div><div class="dv">
+            <select class="ssel" onchange="updStatus('${s.n}',this.value)">
+              <option value="todo"     ${st==='todo'    ?'selected':''}>○ Não iniciado</option>
+              <option value="progress" ${st==='progress'?'selected':''}>↗ Em andamento</option>
+              <option value="review"   ${st==='review'  ?'selected':''}>⚠ Revisão</option>
+              <option value="done"     ${st==='done'    ?'selected':''}>✓ Concluído</option>
+            </select>
+          </div></div>
+        </div>
+        <div class="ca" id="ca-${s.n}">
+          <div style="font-size:11px;font-weight:700;color:var(--tx2);margin-bottom:7px;text-transform:uppercase;letter-spacing:.05em">Comentários</div>
+          <div id="cm-list-${s.n}"><div class="ld" style="padding:0"><div class="sp"></div></div></div>
+          <div style="display:flex;gap:7px;margin-top:8px;align-items:flex-end">
+            <textarea id="cmi-${s.n}" placeholder="Comentar..." style="flex:1;height:48px;resize:none"></textarea>
+            <button class="btn btn-p" style="padding:6px 11px" onclick="postComment('${s.n}')">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════════════════
+// MINHAS TAREFAS — MEMBRO
+// ════════════════════════════════════════════════════════════
+async function renderMyTasks(ca, ta){
+  const myName=curProfile.full_name||'';
+  const myFirst=myName.split(' ')[0].toLowerCase();
+  const mySecs=SECOES_BASE.filter(s=>s.r.toLowerCase().includes(myFirst));
+
+  ca.innerHTML=`
+    <p class="ph">Minhas tarefas</p>
+    <p class="ps">${mySecs.length} seções atribuídas a você</p>
+    ${mySecs.map(s=>{
+      const st=secsData[s.n]?.status||STATUS0[s.n]||'todo';
+      return `<div class="card">
+        <div class="ch" onclick="tgCB(this)">
+          <div class="sn">${s.n}</div>
+          <div class="si"><div class="tt">${s.t}</div><div class="st">Prazo: ${s.p}</div></div>
+          <div class="cr">${statusBadge(st,s.n)}<span style="color:var(--tx3);font-size:11px">▼</span></div>
+        </div>
+        <div class="cb">
+          <div class="dg2">
+            <div class="di"><div class="dl">Seção</div><div class="dv">${s.n} — ${s.t}</div></div>
+            <div class="di"><div class="dl">Prazo</div><div class="dv">${s.p}</div></div>
+          </div>
+          <div class="di" style="margin-bottom:12px"><div class="dl">Atualizar status</div><div class="dv">
+            <select class="ssel" onchange="updStatus('${s.n}',this.value)">
+              <option value="todo"     ${st==='todo'    ?'selected':''}>○ Não iniciado</option>
+              <option value="progress" ${st==='progress'?'selected':''}>↗ Em andamento</option>
+              <option value="review"   ${st==='review'  ?'selected':''}>⚠ Revisão necessária</option>
+              <option value="done"     ${st==='done'    ?'selected':''}>✓ Concluído</option>
+            </select>
+          </div></div>
+          <div class="ca">
+            <div id="cm-list-${s.n}"><div class="ld" style="padding:0"><div class="sp"></div></div></div>
+            <div style="display:flex;gap:7px;margin-top:8px;align-items:flex-end">
+              <textarea id="cmi-${s.n}" placeholder="Comentar sobre esta seção..." style="flex:1;height:48px;resize:none"></textarea>
+              <button class="btn btn-p" style="padding:6px 11px" onclick="postComment('${s.n}')">Enviar</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }).join('')||`<div class="empty">Nenhuma seção atribuída a você ainda.</div>`}
+  `;
+}
+
+// ════════════════════════════════════════════════════════════
+// VISÃO GERAL — MEMBRO (simplificada)
+// ════════════════════════════════════════════════════════════
+async function renderOverview(ca, ta){
+  const all=SECOES_BASE.map(s=>secsData[s.n]?.status||STATUS0[s.n]||'todo');
+  const done=all.filter(x=>x==='done').length;
+  const prog=all.filter(x=>x==='progress').length;
+  const rev=all.filter(x=>x==='review').length;
+  const pct=Math.round((done/SECOES_BASE.length)*100);
+
+  ca.innerHTML=`
+    <p class="ph">Visão geral do PPC</p>
+    <p class="ps">Status atual de todas as seções em andamento</p>
+    <div class="mets">
+      <div class="mc acc"><div class="ml">Total</div><div class="mv">39</div><div class="ms">seções</div></div>
+      <div class="mc grn"><div class="ml">Concluídas</div><div class="mv">${done}</div><div class="ms"></div></div>
+      <div class="mc warn"><div class="ml">Em andamento</div><div class="mv">${prog}</div><div class="ms"></div></div>
+      <div class="mc red"><div class="ml">Revisão</div><div class="mv">${rev}</div><div class="ms"></div></div>
+    </div>
+    <div class="pw">
+      <div class="pw-h"><span class="pw-t">Progresso geral</span><span class="pw-p">${pct}%</span></div>
+      <div class="pbar"><div class="pfill" style="width:${pct}%"></div></div>
+    </div>
+    <div style="font-size:12px;font-weight:700;margin-bottom:10px">Status por grupo</div>
+    ${['samauma','castanheira','seringueira'].map(gk=>{
+      const g=GRUPOS_INFO[gk]; const gsecs=SECOES_BASE.filter(s=>s.g===gk);
+      const gd=gsecs.filter(s=>(secsData[s.n]?.status||STATUS0[s.n]||'todo')==='done').length;
+      const gp=Math.round((gd/Math.max(gsecs.length,1))*100);
+      return `<div class="gh ${gk}">
+        <span class="gi">${g.emoji}</span>
+        <div>
+          <div class="gn">${g.nome} — ${gd}/${gsecs.length} seções concluídas (${gp}%)</div>
+          <div class="gd">${g.horario} · ${g.desc}</div>
+        </div>
+      </div>
+      <div style="margin-bottom:14px">
+        ${gsecs.map(s=>{
+          const st=secsData[s.n]?.status||STATUS0[s.n]||'todo';
+          return `<div style="display:flex;align-items:center;gap:9px;padding:7px 10px;background:var(--surf);border:1px solid var(--brd);border-radius:8px;margin-bottom:5px">
+            <span style="font-size:10px;font-weight:700;color:var(--acc);font-family:'DM Mono',monospace;min-width:32px">${s.n}</span>
+            <span style="flex:1;font-size:12px">${s.t}</span>
+            ${statusBadge(st)}
+          </div>`;
+        }).join('')}
+      </div>`;
+    }).join('')}
+  `;
+}
+
+// ════════════════════════════════════════════════════════════
+// MEMBROS — PRESIDENTE
+// ════════════════════════════════════════════════════════════
+async function renderMembers(ca, ta){
+  const {data:members}=await db.sel('profiles','select=*&order=grupo,full_name');
+  ta.innerHTML=`<button class="btn btn-p" onclick="abrirNovoMembro()">+ Novo membro</button>`;
+  ca.innerHTML=`<p class="ph">Membros da comissão</p><p class="ps">16 membros · Portaria 1463/2026 · Arraste para trocar de grupo</p>`;
+
+  ['samauma','castanheira','seringueira',''].forEach(gk=>{
+    const g=GRUPOS_INFO[gk];
+    const gmembs=(members||[]).filter(m=>m.grupo===(gk));
+    if(!gmembs.length&&!gk) return;
+    ca.innerHTML+=`
+      <div class="gh ${gk}" style="margin-top:14px">${g?`<span class="gi">${g.emoji}</span>`:'<span class="gi">👤</span>'}
+        <div><div class="gn">${g?`Grupo ${g.nome}`:' Sem grupo definido'}</div>
+        ${g?`<div class="gd">${g.horario}</div>`:''}</div>
+      </div>
+      <table class="tbl" style="margin-bottom:14px">
+        <thead><tr><th>Nome</th><th>Função</th><th>Papel / Seções</th><th>Grupo</th><th>Senha</th><th>Ações</th></tr></thead>
+        <tbody>
+          ${gmembs.map(m=>`<tr>
+            <td style="font-weight:600">${esc(m.full_name)} ${m.role==='presidente'?'<span class="tag tag-pres">Pres.</span>':''}</td>
+            <td style="color:var(--tx3)">${esc(m.funcao||'—')}</td>
+            <td style="color:var(--tx3);font-size:11px">${esc(m.cargo||'—')}</td>
+            <td><select class="ssel" style="width:130px" onchange="moverMembro('${m.id}',this.value)">
+              <option value="samauma"     ${m.grupo==='samauma'    ?'selected':''}>🌳 Samaúma</option>
+              <option value="castanheira" ${m.grupo==='castanheira'?'selected':''}>🌰 Castanheira</option>
+              <option value="seringueira" ${m.grupo==='seringueira'?'selected':''}>🍃 Seringueira</option>
+              <option value=""            ${!m.grupo               ?'selected':''}>— Sem grupo —</option>
+            </select></td>
+            <td>${m.senha_padrao?`<span style="color:var(--warn);font-size:11px">⚠ Padrão</span>`:`<span style="color:var(--grn);font-size:11px">✓ Alterada</span>`}</td>
+            <td><button class="btn btn-g" style="padding:4px 9px;font-size:11px" onclick="editarMembro('${m.id}')">Editar</button></td>
+          </tr>`).join('')}
+          ${!gmembs.length?'<tr><td colspan="6" style="text-align:center;color:var(--tx3)">Nenhum membro</td></tr>':''}
+        </tbody>
+      </table>`;
+  });
+}
+
+async function moverMembro(id, novoGrupo){
+  await db.update('profiles',`id=eq.${id}`,{grupo:novoGrupo});
+  showToast('✓ Membro movido para '+( GRUPOS_INFO[novoGrupo]?.nome||'sem grupo'));
+}
+
+function abrirNovoMembro(){
+  editingMembro=null;
+  document.getElementById('modal-memb-title').textContent='Cadastrar membro';
+  document.getElementById('mb-save-btn').textContent='Cadastrar membro';
+  document.getElementById('mb-nome').value='';
+  document.getElementById('mb-email').value='';
+  document.getElementById('mb-funcao').value='';
+  document.getElementById('mb-cargo').value='';
+  document.getElementById('mb-grupo').value='samauma';
+  document.getElementById('mb-senha-info').style.display='block';
+  openModal('modal-membro');
+}
+
+async function editarMembro(id){
+  const {data}=await db.sel('profiles',`id=eq.${id}&select=*`);
+  if(!data||!data[0]) return;
+  const m=data[0]; editingMembro=id;
+  document.getElementById('modal-memb-title').textContent='Editar membro';
+  document.getElementById('mb-save-btn').textContent='Salvar alterações';
+  document.getElementById('mb-nome').value=m.full_name||'';
+  document.getElementById('mb-email').value=m.email||'';
+  document.getElementById('mb-funcao').value=m.funcao||'';
+  document.getElementById('mb-cargo').value=m.cargo||'';
+  document.getElementById('mb-grupo').value=m.grupo||'';
+  document.getElementById('mb-senha-info').style.display='none';
+  openModal('modal-membro');
+}
+
+async function salvarMembro(){
+  const nome=v('mb-nome'), email=v('mb-email'), funcao=v('mb-funcao'), cargo=v('mb-cargo'), grupo=v('mb-grupo');
+  if(!nome||!email){showToast('❌ Nome e e-mail são obrigatórios.');return;}
+  if(editingMembro){
+    await db.update('profiles',`id=eq.${editingMembro}`,{full_name:nome,email,funcao,cargo,grupo});
+    showToast('✓ Membro atualizado!');
+  } else {
+    // Criar usuário via auth (signup)
+    const {data,error}=await sbSignUp(email,SENHA_PADRAO,nome);
+    if(error){showToast('❌ Erro ao criar conta: '+JSON.stringify(error));return;}
+    if(data?.user){
+      await db.upsert('profiles',{id:data.user.id,full_name:nome,email,funcao,cargo,grupo,role:'membro',senha_padrao:true});
+    }
+    showToast('✓ Membro cadastrado! Senha padrão: ppc@2026');
+  }
+  closeModal('modal-membro');
+  goto('members');
+}
+
+// ════════════════════════════════════════════════════════════
+// MENSAGENS
+// ════════════════════════════════════════════════════════════
+async function renderMessages(ca, ta){
+  const {data:msgs}=await db.sel('mensagens','order=created_at.desc');
+  if(isPresident()) ta.innerHTML=`<button class="btn btn-p" onclick="openModal('modal-msg')">+ Nova mensagem</button>`;
+  const myGrupo=curProfile.grupo||'';
+  const filtered=(msgs||[]).filter(m=>m.para_grupo==='todos'||m.para_grupo===myGrupo||m.para_grupo===curUser?.id);
+  // Marcar como lida
+  unreadMsgs=0; document.getElementById('msg-nb').style.display='none';
+  ca.innerHTML=`
+    <p class="ph">Mensagens e Avisos</p>
+    <p class="ps">${filtered.length} mensagens</p>
+    ${filtered.map(m=>`
+      <div class="msg-item ${m.tipo}">
+        <div class="msg-head">
+          <span class="tipo-badge tipo-${m.tipo}">${{aviso:'📢 Aviso',alerta:'⚠️ Alerta',urgente:'🚨 Urgente',info:'ℹ️ Info'}[m.tipo]||m.tipo}</span>
+          <span class="msg-assunto">${esc(m.assunto)}</span>
+          <span class="msg-time">${timeAgo(m.created_at)}</span>
+          ${isPresident()?`<button class="btn btn-g" style="padding:3px 9px;font-size:10px" onclick="delMsg('${m.id}')">✕</button>`:''}
+        </div>
+        <div class="msg-para">Para: ${m.para_grupo==='todos'?'Todos os membros':GRUPOS_INFO[m.para_grupo]?.nome||m.para_grupo}</div>
+        <div class="msg-corpo" style="margin-top:5px">${esc(m.corpo)}</div>
+      </div>`).join('')||`<div class="empty">Nenhuma mensagem ainda.</div>`}
+  `;
+}
+
+async function enviarMsg(){
+  const para=v('msg-para'), tipo=v('msg-tipo'), assunto=v('msg-assunto'), corpo=v('msg-corpo');
+  if(!assunto||!corpo){showToast('❌ Preencha assunto e mensagem.');return;}
+  await db.insert('mensagens',{de_user_id:curUser.id,de_nome:curProfile.full_name,para_grupo:para,assunto,corpo,tipo});
+  showToast('✓ Mensagem enviada!'); closeModal('modal-msg');
+  document.getElementById('msg-assunto').value=''; document.getElementById('msg-corpo').value='';
+  if(curView==='messages') goto('messages');
+}
+
+async function delMsg(id){
+  if(!confirm('Remover esta mensagem?')) return;
+  await db.del('mensagens',`id=eq.${id}`);
+  showToast('✓ Mensagem removida.'); goto('messages');
+}
+
+// ════════════════════════════════════════════════════════════
+// CRONOGRAMA — PRESIDENTE
+// ════════════════════════════════════════════════════════════
+async function renderSchedule(ca, ta){
+  const today=fmt_date(new Date());
+  const {data:reuns}=await db.sel('reunioes','order=data_reuniao.asc,hora_inicio.asc&limit=60');
+  ta.innerHTML=`<button class="btn btn-p" onclick="abrirNovaReuniao()">+ Nova reunião</button>
+    <button class="btn btn-g" onclick="gerarReunioesIniciais().then(()=>goto('schedule'))">↻ Regenerar</button>`;
+
+  ca.innerHTML=`<p class="ph">Cronograma de Reuniões</p><p class="ps">Grupos Samaúma · Castanheira · Seringueira</p>`;
+  const future=(reuns||[]).filter(r=>r.data_reuniao>=today);
+  const past=(reuns||[]).filter(r=>r.data_reuniao<today);
+
+  if(future.length){
+    ca.innerHTML+=`<div style="font-size:12px;font-weight:700;margin-bottom:10px">Próximas reuniões</div>`;
+    ca.innerHTML+=renderReunList(future, true);
+  }
+  if(past.length){
+    ca.innerHTML+=`<div style="font-size:12px;font-weight:700;margin:16px 0 10px;color:var(--tx3)">Reuniões realizadas</div>`;
+    ca.innerHTML+=renderReunList(past.slice(-10).reverse(), false);
+  }
+}
+
+function renderReunList(list, canEdit){
+  return list.map(r=>{
+    const g=GRUPOS_INFO[r.grupo]||{}; const dt=new Date(r.data_reuniao+'T12:00:00');
+    const statusColors={agendada:'acc',realizada:'grn',cancelada:'red',adiada:'warn'};
+    return `<div class="reun-card">
+      <div class="reun-data" style="background:var(--${statusColors[r.status]||'acc'}-l)">
+        <div class="rd-dia" style="color:var(--${statusColors[r.status]||'acc'})">${dt.getDate()}</div>
+        <div class="rd-mes" style="color:var(--${statusColors[r.status]||'acc'})">${MESES[dt.getMonth()]}</div>
+        <div class="rd-dsm">${DIAS_SEMANA[dt.getDay()]}</div>
+      </div>
+      <div class="reun-info">
+        <div class="ri-grp" style="color:var(--${g.cor||'acc'})">${g.emoji||''} ${g.nome||r.grupo}</div>
+        <div class="ri-hor">${r.hora_inicio}–${r.hora_fim} · ${r.local_reuniao}</div>
+        ${r.pauta?`<div class="ri-pau">${r.pauta}</div>`:''}
+      </div>
+      <div class="reun-status" style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
+        <span class="badge b${statusColors[r.status]||'p'}">${r.status}</span>
+        ${canEdit&&isPresident()?`
+          <select class="ssel" style="width:110px;font-size:10px" onchange="updStatusReuniao('${r.id}',this.value)">
+            <option value="agendada"  ${r.status==='agendada' ?'selected':''}>Agendada</option>
+            <option value="realizada" ${r.status==='realizada'?'selected':''}>Realizada</option>
+            <option value="cancelada" ${r.status==='cancelada'?'selected':''}>Cancelada</option>
+            <option value="adiada"    ${r.status==='adiada'   ?'selected':''}>Adiada</option>
+          </select>
+          <button class="btn btn-g" style="padding:3px 9px;font-size:10px" onclick="editarReuniao('${r.id}')">Editar</button>
+          <button class="btn btn-p" style="padding:3px 9px;font-size:10px" onclick="abrirNovaAta('${r.id}','${r.grupo}')">+ ATA</button>
+        `:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function updStatusReuniao(id, st){
+  await db.update('reunioes',`id=eq.${id}`,{status:st});
+  showToast('✓ Status atualizado');
+}
+
+function abrirNovaReuniao(){
+  editingReuniao=null;
+  document.getElementById('modal-reun-title').textContent='Nova reunião';
+  const hoje=new Date(); hoje.setDate(hoje.getDate()+7);
+  document.getElementById('r-data').value=fmt_date(hoje);
+  openModal('modal-reuniao');
+}
+
+async function editarReuniao(id){
+  const {data}=await db.sel('reunioes',`id=eq.${id}&select=*`);
+  if(!data||!data[0]) return;
+  const r=data[0]; editingReuniao=id;
+  document.getElementById('modal-reun-title').textContent='Editar reunião';
+  document.getElementById('r-grupo').value=r.grupo;
+  document.getElementById('r-data').value=r.data_reuniao;
+  document.getElementById('r-ini').value=r.hora_inicio;
+  document.getElementById('r-fim').value=r.hora_fim;
+  document.getElementById('r-local').value=r.local_reuniao;
+  document.getElementById('r-pauta').value=r.pauta||'';
+  openModal('modal-reuniao');
+}
+
+async function salvarReuniao(){
+  const grupo=v('r-grupo'), data_reuniao=v('r-data'), hora_inicio=v('r-ini'), hora_fim=v('r-fim'), local_reuniao=v('r-local'), pauta=v('r-pauta');
+  if(!data_reuniao){showToast('❌ Informe a data.');return;}
+  if(editingReuniao){
+    await db.update('reunioes',`id=eq.${editingReuniao}`,{grupo,data_reuniao,hora_inicio,hora_fim,local_reuniao,pauta});
+    showToast('✓ Reunião atualizada!');
+  } else {
+    await db.insert('reunioes',{grupo,data_reuniao,hora_inicio,hora_fim,local_reuniao,pauta,status:'agendada'});
+    showToast('✓ Reunião cadastrada!');
+  }
+  closeModal('modal-reuniao'); goto('schedule');
+}
+
+// ════════════════════════════════════════════════════════════
+// CRONOGRAMA — MEMBRO
+// ════════════════════════════════════════════════════════════
+async function renderMySchedule(ca, ta){
+  const myGrupo=curProfile.grupo||'';
+  const today=fmt_date(new Date());
+  const {data:reuns}=await db.sel('reunioes',`grupo=eq.${myGrupo}&order=data_reuniao.asc&limit=20`);
+  const g=GRUPOS_INFO[myGrupo];
+  ca.innerHTML=`
+    <p class="ph">Reuniões — ${g?g.emoji+' '+g.nome:'Meu grupo'}</p>
+    <p class="ps">${g?.horario||''}</p>
+    ${(reuns||[]).map(r=>{
+      const dt=new Date(r.data_reuniao+'T12:00:00');
+      const past=r.data_reuniao<today;
+      return `<div class="reun-card" style="${past?'opacity:.65':''}">
+        <div class="reun-data" style="background:var(--${g?.cor||'acc'}-l)">
+          <div class="rd-dia" style="color:var(--${g?.cor||'acc'})">${dt.getDate()}</div>
+          <div class="rd-mes" style="color:var(--${g?.cor||'acc'})">${MESES[dt.getMonth()]}</div>
+          <div class="rd-dsm">${DIAS_SEMANA[dt.getDay()]}</div>
+        </div>
+        <div class="reun-info">
+          <div class="ri-grp">${r.hora_inicio}–${r.hora_fim} · ${r.local_reuniao}</div>
+          ${r.pauta?`<div class="ri-pau">${r.pauta}</div>`:''}
+        </div>
+        <span class="badge ${r.status==='realizada'?'bd':r.status==='cancelada'?'bt':'bp'}">${r.status}</span>
+      </div>`;
+    }).join('')||`<div class="empty">Nenhuma reunião agendada para seu grupo.</div>`}
+  `;
+}
+
+// ════════════════════════════════════════════════════════════
+// ATAS — PRESIDENTE
+// ════════════════════════════════════════════════════════════
+async function renderAtas(ca, ta){
+  const {data:atas}=await db.sel('atas','select=*,reunioes(grupo,data_reuniao,hora_inicio)&order=created_at.desc');
+  ta.innerHTML=`<button class="btn btn-p" onclick="abrirNovaAta()">+ Nova ATA</button>`;
+  ca.innerHTML=`
+    <p class="ph">Atas de Reunião</p>
+    <p class="ps">${(atas||[]).length} atas registradas</p>
+    ${(atas||[]).map(a=>{
+      const g=GRUPOS_INFO[a.reunioes?.grupo]||{};
+      const dt=a.reunioes?.data_reuniao?new Date(a.reunioes.data_reuniao+'T12:00:00'):null;
+      return `<div class="ata-card">
+        <div class="ata-head">
+          <span style="font-size:18px">${g.emoji||'📋'}</span>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700">${a.numero_ata||'ATA'} ${dt?'— '+dt.toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'}):''}</div>
+            <div style="font-size:11px;color:var(--tx3)">${g.nome||''} · ${a.status}</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            ${a.status==='rascunho'?`<button class="btn btn-warn" style="padding:5px 10px;font-size:11px" onclick="abrirAta('${a.id}')">Abrir p/ assinatura</button>`:''}
+            ${a.status==='aberta_assinatura'?`<button class="btn btn-grn" style="padding:5px 10px;font-size:11px" onclick="finalizarAta('${a.id}')">Finalizar</button>`:''}
+            <button class="btn btn-g" style="padding:5px 10px;font-size:11px" onclick="verAta('${a.id}')">Ver</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('')||`<div class="empty">Nenhuma ata registrada ainda.</div>`}
+  `;
+}
+
+async function abrirNovaAta(reuniaoId='', grupo=''){
+  const {data:reuns}=await db.sel('reunioes','order=data_reuniao.desc&limit=20');
+  const sel=document.getElementById('ata-reuniao');
+  sel.innerHTML='<option value="">Selecionar reunião...</option>';
+  (reuns||[]).forEach(r=>{
+    const g=GRUPOS_INFO[r.grupo]||{}; const dt=new Date(r.data_reuniao+'T12:00:00');
+    const opt=document.createElement('option');
+    opt.value=r.id; opt.selected=r.id===reuniaoId;
+    opt.textContent=`${g.emoji||''} ${g.nome||r.grupo} — ${dt.toLocaleDateString('pt-BR')} ${r.hora_inicio}`;
+    sel.appendChild(opt);
+  });
+  // Pré-carregar presenças do grupo
+  const grpMembros=MEMBROS_PADRAO.filter(m=>m.grupo===grupo||(reuniaoId&&!grupo));
+  const presList=document.getElementById('ata-pres-list');
+  const members=grupo?MEMBROS_PADRAO.filter(m=>m.grupo===grupo||m.grupo==='samauma'&&m.role==='presidente'):MEMBROS_PADRAO;
+  presList.innerHTML=members.map(m=>`
+    <div class="presenca-item">
+      <span class="presenca-nome">${m.nome}</span>
+      <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer">
+        <input type="checkbox" id="pres-${m.nome.replace(/\s+/g,'_')}" style="accent-color:var(--grn)"> Presente
+      </label>
+    </div>`).join('');
+  document.getElementById('ata-num').value=`ATA-${String(Date.now()).slice(-4)}/2026`;
+  document.getElementById('ata-conteudo').value='';
+  document.getElementById('ata-deliber').value='';
+  openModal('modal-ata');
+}
+
+async function salvarAta(){
+  const reuniao_id=v('ata-reuniao'), numero_ata=v('ata-num'), conteudo=v('ata-conteudo'), deliberacoes=v('ata-deliber');
+  if(!conteudo){showToast('❌ Registre o conteúdo da ata.');return;}
+  const {data:ata}=await db.insert('atas',{reuniao_id:reuniao_id||null,numero_ata,conteudo,deliberacoes,status:'rascunho',created_by:curProfile.full_name});
+  // Salvar presenças
+  if(ata&&ata[0]){
+    const ataId=ata[0].id;
+    const presRows=[];
+    document.querySelectorAll('[id^="pres-"]').forEach(cb=>{
+      const nome=cb.id.replace('pres-','').replace(/_/g,' ');
+      presRows.push({ata_id:ataId,membro_nome:nome,presente:cb.checked});
+    });
+    if(presRows.length) await db.insert('presencas',presRows);
+  }
+  showToast('✓ ATA salva!'); closeModal('modal-ata'); goto('atas');
+}
+
+async function abrirAta(id){
+  await db.update('atas',`id=eq.${id}`,{status:'aberta_assinatura',aberta_em:new Date().toISOString()});
+  showToast('✓ ATA aberta para assinatura. Os membros podem assinar agora.');
+  goto('atas');
+}
+
+async function finalizarAta(id){
+  await db.update('atas',`id=eq.${id}`,{status:'finalizada',finalizada_em:new Date().toISOString()});
+  showToast('✅ ATA finalizada!'); goto('atas');
+}
+
+async function verAta(id){
+  const [{data:ata},{data:pres}]=await Promise.all([
+    db.sel('atas',`id=eq.${id}&select=*,reunioes(grupo,data_reuniao,hora_inicio)`),
+    db.sel('presencas',`ata_id=eq.${id}&select=*&order=membro_nome`)
+  ]);
+  if(!ata||!ata[0]) return;
+  const a=ata[0]; const g=GRUPOS_INFO[a.reunioes?.grupo]||{};
+  const dt=a.reunioes?.data_reuniao?new Date(a.reunioes.data_reuniao+'T12:00:00'):null;
+  const content=document.getElementById('content-area');
+  content.innerHTML=`
+    <button class="btn btn-g" onclick="goto('atas')" style="margin-bottom:14px">← Voltar</button>
+    <div style="background:#fff;border:1px solid var(--brd);border-radius:var(--rl);padding:28px;max-width:700px;margin:0 auto">
+      <div style="text-align:center;margin-bottom:20px;border-bottom:2px solid var(--brd);padding-bottom:16px">
+        <div style="font-size:11px;font-weight:600;color:var(--tx3);letter-spacing:.1em;text-transform:uppercase">INSTITUTO FEDERAL DE RONDÔNIA — CAMPUS GUAJARÁ-MIRIM</div>
+        <div style="font-size:18px;font-weight:700;margin:8px 0">ATA DE REUNIÃO</div>
+        <div style="font-size:13px;color:var(--tx2)">${a.numero_ata||''}</div>
+        <div style="font-size:12px;color:var(--tx3);margin-top:4px">
+          ${g.emoji||''} Grupo ${g.nome||''} 
+          ${dt?'· '+dt.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):''}
+          ${a.reunioes?.hora_inicio?'· '+a.reunioes.hora_inicio:''}
+        </div>
+      </div>
+      <div style="margin-bottom:16px"><strong>Conteúdo:</strong><div style="margin-top:8px;font-size:13px;line-height:1.8;white-space:pre-wrap">${esc(a.conteudo)}</div></div>
+      ${a.deliberacoes?`<div style="margin-bottom:16px"><strong>Deliberações:</strong><div style="margin-top:8px;font-size:13px;line-height:1.8;white-space:pre-wrap">${esc(a.deliberacoes)}</div></div>`:''}
+      <div style="margin-top:20px;border-top:1px solid var(--brd);padding-top:16px">
+        <strong style="font-size:12px">Presenças e Assinaturas</strong>
+        <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          ${(pres||[]).map(p=>`
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surf2);border-radius:8px;font-size:12px">
+              <div>
+                <div style="font-weight:600">${esc(p.membro_nome)}</div>
+                <div style="font-size:10px;color:var(--tx3)">${p.presente?'✓ Presente':'✗ Ausente'}</div>
+              </div>
+              <div>
+                ${p.assinou?`<span style="color:var(--grn);font-size:11px;font-weight:600">✅ Assinado</span><div style="font-size:9px;color:var(--tx3)">${timeAgo(p.assinado_em)}</div>`:
+                  (p.presente?`<span style="color:var(--warn);font-size:11px">Pendente</span>`:`<span style="color:var(--tx3);font-size:10px">—</span>`)}
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:20px;font-size:11px;color:var(--tx3)">Status: ${a.status} ${a.finalizada_em?'· Finalizada em '+new Date(a.finalizada_em).toLocaleDateString('pt-BR'):''}</div>
+    </div>`;
+}
+
+// ════════════════════════════════════════════════════════════
+// ASSINAR ATA — MEMBRO
+// ════════════════════════════════════════════════════════════
+async function renderAtaSign(ca, ta){
+  const myName=curProfile.full_name||'';
+  const {data:pres}=await db.sel('presencas',`membro_nome=eq.${encodeURIComponent(myName)}&assinou=eq.false&select=*,atas!inner(status,numero_ata,conteudo,reunioes(grupo,data_reuniao))`);
+  ca.innerHTML=`
+    <p class="ph">Assinar ATA</p>
+    <p class="ps">ATAs pendentes da sua assinatura</p>
+    ${(pres||[]).filter(p=>p.atas?.status==='aberta_assinatura'&&p.presente).map(p=>{
+      const a=p.atas; const g=GRUPOS_INFO[a.reunioes?.grupo]||{};
+      const dt=a.reunioes?.data_reuniao?new Date(a.reunioes.data_reuniao+'T12:00:00'):null;
+      return `<div class="ata-card">
+        <div class="ata-head">
+          <span style="font-size:18px">${g.emoji||'📋'}</span>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700">${a.numero_ata}</div>
+            <div style="font-size:11px;color:var(--tx3)">${g.nome||''} ${dt?'· '+dt.toLocaleDateString('pt-BR'):''}</div>
+          </div>
+        </div>
+        <div class="ata-body">
+          <div style="font-size:12px;color:var(--tx2);line-height:1.6;margin-bottom:12px">${esc(a.conteudo?.substring(0,200)||'')}${a.conteudo?.length>200?'…':''}</div>
+          <div class="info-box">Ao assinar, você confirma que leu e está de acordo com o conteúdo desta ata.</div>
+          <button class="btn btn-grn" onclick="assinarAta('${p.id}')">✍ Assinar esta ATA</button>
+        </div>
+      </div>`;
+    }).join('')||`<div class="empty">Nenhuma ATA pendente de assinatura.</div>`}
+  `;
+}
+
+async function assinarAta(presId){
+  await db.update('presencas',`id=eq.${presId}`,{assinou:true,assinado_em:new Date().toISOString()});
+  showToast('✅ ATA assinada com sucesso!'); goto('ata-sign');
+}
+
+// ════════════════════════════════════════════════════════════
+// CONFIGURAÇÕES
+// ════════════════════════════════════════════════════════════
+function renderSettings(ca, ta){
+  ca.innerHTML=`
+    <p class="ph">Configurações</p>
+    <p class="ps">Conta e preferências</p>
+    <div class="card" style="max-width:480px">
+      <div class="ch" style="cursor:default">
+        <div class="av" style="width:42px;height:42px;font-size:14px;background:var(--acc-l);color:var(--acc)">
+          ${(curProfile.full_name||'?').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()}
+        </div>
+        <div class="si">
+          <div class="tt">${esc(curProfile.full_name||'')}</div>
+          <div class="st">${esc(curProfile.email||'')} · ${curProfile.role==='presidente'?'Presidente':'Membro'}</div>
+        </div>
+      </div>
+      <div class="cb open" style="padding:16px">
+        ${curProfile.senha_padrao?`<div class="alert-box">⚠ Você ainda usa a senha padrão <strong>ppc@2026</strong>. Altere agora para garantir a segurança da sua conta.</div>`:''}
+        <div class="dg2" style="margin-bottom:12px">
+          <div class="di"><div class="dl">Grupo</div><div class="dv">${GRUPOS_INFO[curProfile.grupo]?.emoji||''} ${GRUPOS_INFO[curProfile.grupo]?.nome||'Sem grupo'}</div></div>
+          <div class="di"><div class="dl">Função</div><div class="dv">${curProfile.funcao||'—'}</div></div>
+        </div>
+        <button class="btn btn-p" onclick="openModal('modal-senha')">🔑 Alterar senha</button>
+        <button class="btn btn-g" style="margin-left:8px" onclick="limparConfig()">🗑 Limpar credenciais</button>
+      </div>
+    </div>
+    ${isPresident()?`
+    <div class="card" style="max-width:480px;margin-top:12px">
+      <div class="ch" style="cursor:default"><div class="si"><div class="tt">Configurações do sistema</div></div></div>
+      <div class="cb open" style="padding:16px">
+        <div class="info-box">O botão Setup recria as seções e regenera o cronograma dos 3 grupos para as próximas 12 semanas.</div>
+        <button class="btn btn-warn" onclick="setupInicial()">⚙ Executar Setup inicial</button>
+      </div>
+    </div>`:''}
+  `;
+}
+
+async function alterarSenha(){
+  const atual=v('pw-atual'), nova=v('pw-nova'), conf=v('pw-conf');
+  hideEl('pw-err');
+  if(!atual||!nova||!conf){document.getElementById('pw-err').textContent='Preencha todos os campos.';showEl('pw-err');return;}
+  if(nova!==conf){document.getElementById('pw-err').textContent='As senhas não coincidem.';showEl('pw-err');return;}
+  if(nova.length<6){document.getElementById('pw-err').textContent='A senha deve ter ao menos 6 caracteres.';showEl('pw-err');return;}
+  // Verificar senha atual
+  const {data,error}=await sbSignIn(curProfile.email,atual);
+  if(error){document.getElementById('pw-err').textContent='Senha atual incorreta.';showEl('pw-err');return;}
+  const {error:e2}=await sbUpdatePassword(nova);
+  if(e2){document.getElementById('pw-err').textContent='Erro ao alterar senha.';showEl('pw-err');return;}
+  await db.update('profiles',`id=eq.${curUser.id}`,{senha_padrao:false});
+  curProfile.senha_padrao=false;
+  showToast('✅ Senha alterada com sucesso!'); closeModal('modal-senha');
+}
+
+function limparConfig(){
+  if(!confirm('Limpar as credenciais salvas? Você precisará inserir novamente na próxima vez.')) return;
+  localStorage.removeItem('sb_url'); localStorage.removeItem('sb_key'); localStorage.removeItem('sb_token');
+  location.reload();
+}
+
+// ════════════════════════════════════════════════════════════
+// COMENTÁRIOS
+// ════════════════════════════════════════════════════════════
+async function loadComments(num){
+  const el=document.getElementById('cm-list-'+num); if(!el) return;
+  const {data}=await db.sel('comentarios',`secao_num=eq.${num}&order=created_at.asc&select=*`);
+  if(!data||!data.length){el.innerHTML='<div style="font-size:11px;color:var(--tx3);padding:4px 0">Nenhum comentário ainda.</div>';return;}
+  el.innerHTML=data.map(c=>{
+    const mine=c.autor===curProfile.full_name;
+    const ini=(c.autor||'?').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+    return `<div style="display:flex;gap:7px;margin-bottom:7px;${mine?'flex-direction:row-reverse':''}">
+      <div style="width:24px;height:24px;border-radius:50%;background:var(--acc-l);color:var(--acc);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">${ini}</div>
+      <div style="background:${mine?'var(--acc-l)':'var(--surf2)'};border-radius:${mine?'9px 0':'0 9px'} 9px 9px;padding:7px 10px;flex:1">
+        <div style="font-size:10px;font-weight:700">${esc(c.autor)} <span style="color:var(--tx3);font-weight:400">${timeAgo(c.created_at)}</span></div>
+        <div style="font-size:12px;margin-top:2px;line-height:1.5">${esc(c.texto)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function postComment(num){
+  const inp=document.getElementById('cmi-'+num); const txt=inp?.value?.trim();
+  if(!txt) return;
+  inp.value=''; inp.disabled=true;
+  const {data}=await db.insert('comentarios',{secao_num:num,autor:curProfile.full_name,user_id:curUser.id,texto:txt,created_at:new Date().toISOString()});
+  inp.disabled=false;
+  loadComments(num);
+}
+
+// ════════════════════════════════════════════════════════════
+// ATUALIZAR STATUS SEÇÃO
+// ════════════════════════════════════════════════════════════
+async function updStatus(num, val){
+  const now=new Date().toISOString(); const user=curProfile.full_name||'Usuário';
+  if(!secsData[num]) secsData[num]={};
+  secsData[num].status=val; secsData[num].updated_by=user;
+  const sec=SECOES_BASE.find(s=>s.n===num);
+  await db.upsert('secoes',{num,status:val,updated_by:user,updated_at:now,titulo:sec?.t,responsavel:sec?.r,fase:sec?.f,prazo:sec?.p,grupo:sec?.g});
+  await db.insert('atividades',{user_name:user,user_id:curUser.id,secao_num:num,acao:`alterou status → ${val}`,created_at:now});
+  showToast('✓ Status salvo!');
+  // Atualizar badge inline
+  document.querySelectorAll(`#sec-list .sn,#sec-list`).forEach(()=>{});
+  document.getElementById('d-done') && refreshDashMetrics();
+}
+
+function refreshDashMetrics(){
+  const all=SECOES_BASE.map(s=>secsData[s.n]?.status||STATUS0[s.n]||'todo');
+  const done=all.filter(x=>x==='done').length;
+  const pct=Math.round((done/SECOES_BASE.length)*100);
+  const el=document.getElementById('d-done'); if(el) el.textContent=done;
+  const pEl=document.getElementById('prog-pct'); if(pEl){pEl.textContent=pct+'%';}
+}
+
+// ════════════════════════════════════════════════════════════
+// POLLING
+// ════════════════════════════════════════════════════════════
+function startPolling(){
+  if(pollTmr) clearInterval(pollTmr);
+  pollTmr=setInterval(async()=>{
+    const {data}=await db.sel('secoes','select=num,status,updated_by,updated_at');
+    if(!data) return;
+    let changed=false;
+    data.forEach(r=>{
+      if(secsData[r.num]&&secsData[r.num].status!==r.status){
+        if(r.updated_by&&r.updated_by!==curProfile.full_name) showToast(`🔄 ${r.updated_by.split(' ')[0]} atualizou seção ${r.num}`);
+        secsData[r.num]={...secsData[r.num],...r}; changed=true;
+      }
+    });
+    // Verificar mensagens novas
+    const {data:msgs}=await db.sel('mensagens','order=created_at.desc&limit=1');
+    if(msgs&&msgs[0]){
+      const nb=document.getElementById('msg-nb');
+      if(nb&&msgs[0].de_nome!==curProfile.full_name){nb.textContent='!';nb.style.display='inline';}
+    }
+  },15000);
+}
+
+// ════════════════════════════════════════════════════════════
+// TOGGLE CARD BODY + LAZY LOAD COMMENTS
+// ════════════════════════════════════════════════════════════
+function tgCB(el){
+  const body=el.nextElementSibling;
+  const wasOpen=body.classList.contains('open');
+  body.classList.toggle('open');
+  if(!wasOpen){
+    const num=el.querySelector('.sn')?.textContent?.trim();
+    if(num) loadComments(num);
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════════════════
+function statusBadge(s, n=''){
+  const map={done:`<span class="badge bd" id="sbg-${n}">✓ Concluído</span>`,progress:`<span class="badge bp" id="sbg-${n}">↗ Em andamento</span>`,review:`<span class="badge br" id="sbg-${n}">⚠ Revisão</span>`,todo:`<span class="badge bt" id="sbg-${n}">○ Não iniciado</span>`};
+  return map[s]||map.todo;
+}
+function v(id){return document.getElementById(id)?.value?.trim()||'';}
+function esc(t){return(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function timeAgo(iso){if(!iso)return'';const d=(Date.now()-new Date(iso).getTime())/1000;if(d<60)return'agora';if(d<3600)return`há ${Math.floor(d/60)}min`;if(d<86400)return`há ${Math.floor(d/3600)}h`;return new Date(iso).toLocaleDateString('pt-BR');}
+function showToast(msg,dur=3000){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),dur);}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.style.display='none');document.getElementById(id).style.display='flex';}
+function showEl(id){const e=document.getElementById(id);if(e)e.style.display='block';}
+function hideEl(id){const e=document.getElementById(id);if(e)e.style.display='none';}
+function showErr(id,msg){const e=document.getElementById(id);if(e){e.textContent=msg;e.style.display='block';}}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function toggleSB(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('ovr').classList.toggle('show');}
+function closeSB(){document.getElementById('sidebar').classList.remove('open');document.getElementById('ovr').classList.remove('show');}
+
+// ════════════════════════════════════════════════════════════
+// BOOT
+// ════════════════════════════════════════════════════════════
+(async function boot(){
+  const url=localStorage.getItem('sb_url');
+  const key=localStorage.getItem('sb_key');
+  const tok=localStorage.getItem('sb_token');
+  if(!url||!key){document.getElementById('scr-config').style.display='flex';return;}
+  SB_URL=url.replace(/\/$/,''); SB_KEY=key;
+  if(tok){
+    SB_TOKEN=tok;
+    const {data,error}=await sbGetUser();
+    if(!error&&data?.id){await loadProfileAndEnter(data);return;}
+    localStorage.removeItem('sb_token');
+  }
+  document.getElementById('scr-config').style.display='none';
+  document.getElementById('scr-auth').style.display='flex';
+})();
+</script>
+</body>
+</html>
