@@ -243,7 +243,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--acc);}
 <body>
 
 <!-- ══ CONFIG ═══════════════════════════════════════════════ -->
-<div class="screen" id="scr-config">
+<div class="screen" id="scr-config" style="display:none">
   <div class="box">
     <div class="logo">
       <div class="inst">IFRO · Guajará-Mirim</div>
@@ -752,15 +752,29 @@ async function sbUpdatePassword(newPass){
 // ════════════════════════════════════════════════════════════
 // CONFIG
 // ════════════════════════════════════════════════════════════
-function saveConfig(){
+async function saveConfig(){
   const url=document.getElementById('cfg-url').value.trim().replace(/\/$/,'');
   const key=document.getElementById('cfg-key').value.trim();
+  const btn=document.querySelector('#scr-config .big-btn');
   hideEl('cfg-err');
   if(!url||!key){showErr('cfg-err','Preencha os dois campos.');return;}
   if(!url.includes('.supabase.co')){showErr('cfg-err','URL inválida — deve incluir .supabase.co');return;}
-  if(!key.startsWith('eyJ')){showErr('cfg-err','Chave inválida.');return;}
+  if(!key.startsWith('eyJ')){showErr('cfg-err','Chave inválida — deve começar com eyJ...');return;}
+  btn.disabled=true; btn.textContent='Conectando...';
   SB_URL=url; SB_KEY=key;
+  // Testar conexão real antes de salvar
+  try{
+    const r=await fetch(url+'/rest/v1/profiles?limit=1',{headers:{'apikey':key,'Authorization':'Bearer '+key}});
+    if(!r.ok&&r.status!==406){
+      btn.disabled=false; btn.textContent='Conectar →';
+      showErr('cfg-err','Não foi possível conectar. Verifique a URL e a chave.');return;
+    }
+  }catch(e){
+    btn.disabled=false; btn.textContent='Conectar →';
+    showErr('cfg-err','Erro de rede. Verifique sua conexão e a URL.');return;
+  }
   localStorage.setItem('sb_url',url); localStorage.setItem('sb_key',key);
+  btn.disabled=false; btn.textContent='Conectar →';
   showScreen('scr-auth');
 }
 
@@ -2209,15 +2223,32 @@ function closeSB(){document.getElementById('sidebar').classList.remove('open');d
   const url=localStorage.getItem('sb_url');
   const key=localStorage.getItem('sb_key');
   const tok=localStorage.getItem('sb_token');
-  if(!url||!key){document.getElementById('scr-config').style.display='flex';return;}
+
+  // Sem credenciais salvas → mostrar tela de configuração
+  if(!url||!key){
+    document.getElementById('scr-config').style.display='flex';
+    return;
+  }
+
+  // Credenciais existem → configurar e tentar entrar direto
   SB_URL=url.replace(/\/$/,''); SB_KEY=key;
+
   if(tok){
     SB_TOKEN=tok;
-    const {data,error}=await sbGetUser();
-    if(!error&&data?.id){await loadProfileAndEnter(data);return;}
+    try{
+      const {data,error}=await sbGetUser();
+      if(!error&&data?.id){
+        // Sessão válida → entrar no app
+        await loadProfileAndEnter(data);
+        return;
+      }
+    }catch(e){}
+    // Token expirado → limpar e ir para login
     localStorage.removeItem('sb_token');
+    SB_TOKEN='';
   }
-  document.getElementById('scr-config').style.display='none';
+
+  // Tem credenciais mas sem sessão → tela de login
   document.getElementById('scr-auth').style.display='flex';
 })();
 </script>
