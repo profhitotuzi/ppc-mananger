@@ -494,50 +494,51 @@ const MEMBROS_PADRAO = [
   {nome:'Thays da Silva Mandu',       email:'thays.mandu@ifro.edu.br',       grupo:'',           funcao:'Profa. Química / Dir. Ensino',   cargo:'Diretora de Ensino'},
 ];
 
+// Seções conforme Planilha de Controle PPC SI IFRO (atualizada)
 const SECOES_BASE = [
-  {n:'—',  t:'Capa, equipe, sumário, listas',                          r:'Neemias Ferreira Hitotuzi',                  g:'samauma',     f:'F1',p:'Mar/26'},
-  {n:'1',  t:'Identificação da instituição',                           r:'Neemias Ferreira Hitotuzi',                  g:'samauma',     f:'F1',p:'Mar/26'},
-  {n:'2.1',t:'Identificação do curso',                                 r:'Neemias Ferreira Hitotuzi',                  g:'samauma',     f:'F1',p:'Mar/26'},
-  {n:'2.2',t:'Total de vagas e periodicidade',                         r:'Neemias Ferreira Hitotuzi',                  g:'samauma',     f:'F1',p:'Mar/26'},
-  {n:'2.3',t:'Justificativa — contexto regional e demanda',            r:'Neemias + Profs. TI (NDE)',                  g:'samauma',     f:'F1',p:'30/abr'},
-  {n:'2.4',t:'Público-alvo e formas de ingresso',                      r:'Neemias Ferreira Hitotuzi',                  g:'samauma',     f:'F1',p:'Mar/26'},
-  {n:'2.5',t:'Objetivos geral e específicos do curso',                 r:'Rosangela C. C. Schmidt',                    g:'samauma',     f:'F1',p:'30/abr'},
-  {n:'2.6',t:'Perfil profissional do egresso',                         r:'NDE — Profs. TI',                            g:'castanheira', f:'F1',p:'31/mar'},
-  {n:'3.1',t:'Concepção metodológica',                                 r:'Rosangela C. C. Schmidt',                    g:'samauma',     f:'F2',p:'Jun/26'},
-  {n:'3.1.1',t:'Estratégias de ensino previstas',                      r:'Rosangela C. C. Schmidt',                    g:'samauma',     f:'F2',p:'Jun/26'},
-  {n:'3.1.2',t:'Transversalidade no currículo',                        r:'Rosangela C. C. Schmidt',                    g:'samauma',     f:'F2',p:'Jun/26'},
-  {n:'3.1.3',t:'Acompanhamento pedagógico',                            r:'Rosangela C. C. Schmidt',                    g:'samauma',     f:'F2',p:'Jun/26'},
-  {n:'3.1.4',t:'Flexibilização curricular',                            r:'Rosangela C. C. Schmidt',                    g:'samauma',     f:'F2',p:'Jun/26'},
-  {n:'3.1.5',t:'Atividades não presenciais (até 40%)',                 r:'Rosangela C. C. Schmidt',                    g:'samauma',     f:'F2',p:'Jun/26'},
-  {n:'3.1.6',t:'Curricularização da extensão (mín. 10%)',              r:'Josue Marciel da Silva',                     g:'seringueira', f:'F2',p:'Jun/26'},
-  {n:'3.2', t:'Estrutura curricular — Matriz',                         r:'NDE — Profs. TI',                            g:'castanheira', f:'F1',p:'30/abr'},
-  {n:'3.3', t:'Avaliação do ensino-aprendizagem',                      r:'Rosangela C. C. Schmidt',                    g:'samauma',     f:'F2',p:'Jun/26'},
-  {n:'3.4', t:'Prática profissional e estágio',                        r:'NDE — Profs. TI',                            g:'castanheira', f:'F2',p:'Jun/26'},
-  {n:'3.5', t:'Trabalho de Conclusão de Curso (TCC)',                  r:'NDE — Profs. TI',                            g:'castanheira', f:'F2',p:'Jun/26'},
-  {n:'3.6', t:'Atividades complementares (mín. 200h)',                 r:'NDE — Profs. TI',                            g:'castanheira', f:'F2',p:'Jun/26'},
-  {n:'3.7', t:'Inclusão educacional e apoio ao discente',              r:'Cícero Felix da Silva',                      g:'seringueira', f:'F2',p:'Jun/26'},
-  {n:'3.8', t:'TICs no ensino',                                        r:'NDE — Profs. TI',                            g:'castanheira', f:'F2',p:'Jun/26'},
-  {n:'3.9', t:'Acompanhamento de egressos',                            r:'Josue Marciel da Silva',                     g:'seringueira', f:'F3',p:'Jul/26'},
-  {n:'3.10',t:'Integração ensino, pesquisa e extensão',                r:'Marcus Vinicius C. Morro',                   g:'samauma',     f:'F3',p:'Jul/26'},
-  {n:'3.11',t:'Certificação (conclusão e intermediária)',               r:'Neemias Ferreira Hitotuzi',                  g:'samauma',     f:'F3',p:'Jul/26'},
-  {n:'4',   t:'Equipe docente — formação, titulação',                  r:'Neemias Ferreira Hitotuzi',                  g:'seringueira', f:'F2',p:'Jun/26'},
-  {n:'5.1', t:'Coordenação do curso',                                   r:'Neemias Ferreira Hitotuzi',                  g:'seringueira', f:'F3',p:'Jul/26'},
-  {n:'5.2', t:'Colegiado de curso',                                     r:'Neemias Ferreira Hitotuzi',                  g:'seringueira', f:'F3',p:'Jul/26'},
-  {n:'5.3', t:'Núcleo Docente Estruturante (NDE)',                      r:'Neemias Ferreira Hitotuzi',                  g:'seringueira', f:'F3',p:'Jul/26'},
-  {n:'5.4', t:'Assessoramento ao curso (DAE, DEPEX, DEPESP)',          r:'Cícero Felix da Silva',                      g:'seringueira', f:'F3',p:'Jul/26'},
-  {n:'6.1', t:'Infraestrutura física',                                  r:'Valnei de Lima Oliveira',                    g:'castanheira', f:'F2',p:'Jun/26'},
-  {n:'6.2', t:'Acessibilidade',                                         r:'Cícero Felix da Silva',                      g:'seringueira', f:'F2',p:'Jun/26'},
-  {n:'6.3', t:'Infraestrutura de informática',                          r:'Washington da Silva Batista',                g:'seringueira', f:'F2',p:'Jun/26'},
-  {n:'6.4', t:'Laboratórios didáticos',                                 r:'Washington da Silva Batista',                g:'seringueira', f:'F2',p:'Jun/26'},
-  {n:'6.5', t:'Biblioteca — espaço físico e acervo',                    r:'Fernanda Leite Dias',                        g:'seringueira', f:'F2',p:'Jun/26'},
-  {n:'8',   t:'Base legal',                                             r:'Neemias Ferreira Hitotuzi',                  g:'samauma',     f:'F1',p:'Mar/26'},
-  {n:'9',   t:'Referências bibliográficas do PPC',                      r:'Neemias Ferreira Hitotuzi',                  g:'seringueira', f:'F3',p:'Ago/26'},
-  {n:'10',  t:'Ementas — todos os componentes curriculares',            r:'Profs. TI + Marcello + Maria Enisia',        g:'castanheira', f:'F2',p:'30/mai'},
-  {n:'BIB', t:'Bibliografias básica e complementar',                    r:'Fernanda Leite Dias',                        g:'seringueira', f:'F2',p:'30/mai'},
+  {n:'-',    t:'Capa, equipe, sumário, listas de figuras/tabelas',             r:'Neemias Hitotuzi',                                    co:'Valnei Oliveira (Téc. Adm.)',                   g:'samauma',     f:'Fase 1', p:'Mar/2026', s:'done'},
+  {n:'1',    t:'Dados IFRO (Reitoria), dados do Campus, dirigentes',           r:'Neemias Hitotuzi',                                    co:'Wanderson Oliveira (Téc. Adm. / Chefe de Gab.)',g:'castanheira', f:'Fase 1', p:'Mar/2026', s:'done'},
+  {n:'2.1',  t:'Identificação do curso, dados gerais',                         r:'Neemias Hitotuzi',                                    co:'Valnei Oliveira (Téc. Adm.)',                   g:'samauma',     f:'Fase 1', p:'Mar/2026', s:'done'},
+  {n:'2.2',  t:'Total de vagas e periodicidade',                               r:'Neemias Hitotuzi',                                    co:'-',                                             g:'samauma',     f:'Fase 1', p:'Mar/2026', s:'done'},
+  {n:'2.3',  t:'Contexto regional, demanda, verticalização',                   r:'Neemias Hitotuzi + Profs. TI (NDE)',                  co:'Rosangela Schmidt (Pedagoga) — revisão',        g:'samauma',     f:'Fase 1', p:'Abr/2026', s:'review'},
+  {n:'2.4',  t:'Definição do público e forma de ingresso',                     r:'Neemias Hitotuzi',                                    co:'Wanderson Oliveira (Téc. Adm.)',                g:'samauma',     f:'Fase 1', p:'Mar/2026', s:'done'},
+  {n:'2.5',  t:'Objetivo geral e objetivos específicos',                       r:'Rosangela Schmidt (Pedagoga)',                        co:'Neemias Hitotuzi',                              g:'samauma',     f:'Fase 1', p:'Abr/2026', s:'review'},
+  {n:'2.6',  t:'Competências gerais, específicas e áreas de atuação',          r:'NDE — Profs. TI: Neemias, Paulo, Geane, Washington, Juliano, Levy', co:'Josue Marciel (DEPEX)',          g:'seringueira', f:'Fase 1', p:'Mar/2026', s:'done'},
+  {n:'3.1',  t:'Diretrizes pedagógicas e estratégias de ensino',               r:'Rosangela Schmidt (Pedagoga)',                        co:'Neemias Hitotuzi',                              g:'castanheira', f:'Fase 2', p:'Jun/2026', s:'todo'},
+  {n:'3.1.1',t:'Metodologias ativas, ABP, ensino híbrido',                    r:'Rosangela Schmidt (Pedagoga)',                        co:'Profs. TI (NDE)',                               g:'seringueira', f:'Fase 2', p:'Jun/2026', s:'todo'},
+  {n:'3.1.2',t:'Temas transversais no currículo',                              r:'Rosangela Schmidt (Pedagoga)',                        co:'-',                                             g:'castanheira', f:'Fase 2', p:'Jun/2026', s:'todo'},
+  {n:'3.1.3',t:'Estratégias de suporte ao discente',                           r:'Rosangela Schmidt (Pedagoga)',                        co:'Cícero Felix da Silva (DAPE)',                   g:'castanheira', f:'Fase 2', p:'Jun/2026', s:'todo'},
+  {n:'3.1.4',t:'Estratégias de flexibilização',                                r:'Rosangela Schmidt (Pedagoga)',                        co:'Profs. TI (NDE)',                               g:'seringueira', f:'Fase 2', p:'Jun/2026', s:'todo'},
+  {n:'3.1.5',t:'EaD e atividades remotas (até 40%)',                           r:'Rosangela Schmidt (Pedagoga)',                        co:'Profs. TI',                                     g:'samauma',     f:'Fase 2', p:'Jun/2026', s:'todo'},
+  {n:'3.1.6',t:'Integração extensão-currículo (10% CH)',                       r:'Josue Marciel da Silva (DEPEX)',                      co:'Rosangela Schmidt (Pedagoga)',                   g:'seringueira', f:'Fase 2', p:'Jun/2026', s:'todo'},
+  {n:'3.2',  t:'Distribuição dos componentes por semestre (Matriz Curricular)', r:'NDE — Profs. TI: Neemias, Paulo, Geane, Washington, Juliano, Levy', co:'Rosangela Schmidt (Pedagoga)', g:'seringueira', f:'Fase 1', p:'Abr/2026', s:'progress'},
+  {n:'3.3',  t:'Critérios, instrumentos e avaliação do curso',                 r:'Rosangela Schmidt (Pedagoga)',                        co:'NDE — Profs. TI',                               g:'castanheira', f:'Fase 2', p:'Jun/2026', s:'todo'},
+  {n:'3.4',  t:'Prática integrada e estágio supervisionado',                   r:'NDE — Profs. TI',                                     co:'Rosangela Schmidt (Pedagoga)',                   g:'castanheira', f:'Fase 2', p:'Jun/2026', s:'todo'},
+  {n:'3.5',  t:'Regulamento do Trabalho de Conclusão de Curso',                r:'NDE — Profs. TI',                                     co:'Rosangela Schmidt (Pedagoga)',                   g:'castanheira', f:'Fase 2', p:'Jun/2026', s:'todo'},
+  {n:'3.6',  t:'Regulamentação e carga horária (ativ. complementares)',        r:'NDE — Profs. TI',                                     co:'Rosangela Schmidt (Pedagoga)',                   g:'seringueira', f:'Fase 2', p:'Jun/2026', s:'todo'},
+  {n:'3.7',  t:'Inclusão educacional e apoio ao discente',                     r:'Rosangela Schmidt (Pedagoga)',                        co:'Cícero Felix da Silva (DAPE)',                   g:'seringueira', f:'Fase 2', p:'Jun/2026', s:'todo'},
+  {n:'3.8',  t:'Multimeios, recursos de informática, AVA',                     r:'Profs. TI (NDE)',                                     co:'Rosangela Schmidt (Pedagoga)',                   g:'seringueira', f:'Fase 2', p:'Jun/2026', s:'todo'},
+  {n:'3.9',  t:'Acompanhamento de egressos',                                   r:'Josue Marciel da Silva (DEPEX)',                      co:'NDE — Profs. TI',                               g:'castanheira', f:'Fase 3', p:'Jul/2026', s:'todo'},
+  {n:'3.10', t:'Integração e parcerias (ensino, pesquisa, extensão)',           r:'Marcus Vinicius C. Morro (DEPESP)',                   co:'Josue Marciel da Silva (DEPEX)',                 g:'samauma',     f:'Fase 3', p:'Jul/2026', s:'todo'},
+  {n:'3.11', t:'Diploma e certificações intermediárias',                        r:'Neemias Hitotuzi',                                    co:'Wanderson Oliveira (Téc. Adm.)',                g:'samauma',     f:'Fase 3', p:'Jul/2026', s:'todo'},
+  {n:'4',    t:'Requisitos de formação, titulação, IQC (equipe docente)',       r:'Neemias Hitotuzi',                                    co:'Valnei Oliveira / Wanderson',                   g:'samauma',     f:'Fase 2', p:'Jun/2026', s:'progress'},
+  {n:'5.1',  t:'Perfil e atribuições do coordenador de curso',                 r:'Neemias Hitotuzi',                                    co:'Valnei Oliveira / Wanderson',                   g:'samauma',     f:'Fase 3', p:'Jul/2026', s:'todo'},
+  {n:'5.2',  t:'Composição e competências do colegiado',                       r:'Neemias Hitotuzi',                                    co:'Valnei Oliveira / Wanderson',                   g:'samauma',     f:'Fase 3', p:'Jul/2026', s:'todo'},
+  {n:'5.3',  t:'Núcleo Docente Estruturante (NDE)',                            r:'Neemias Hitotuzi',                                    co:'Valnei Oliveira / Wanderson',                   g:'samauma',     f:'Fase 3', p:'Jul/2026', s:'todo'},
+  {n:'5.4',  t:'DAE, DEPEX, DEPESP, equipe técnico-pedagógica',               r:'Neemias Hitotuzi',                                    co:'Cícero Felix (DAPE) · Josue Marciel (DEPEX) · Marcus (DEPESP)', g:'samauma', f:'Fase 3', p:'Jul/2026', s:'todo'},
+  {n:'6.1',  t:'Salas, laboratórios, espaços físicos',                         r:'Valnei de Lima Oliveira (Téc. Adm.)',                 co:'Wanderson Oliveira (Chefe de Gabinete)',         g:'castanheira', f:'Fase 2', p:'Jun/2026', s:'todo'},
+  {n:'6.2',  t:'Acessibilidade (física, visual, auditiva)',                    r:'Valnei de Lima Oliveira (Téc. Adm.)',                 co:'Rosangela Schmidt (Pedagoga)',                   g:'seringueira', f:'Fase 2', p:'Jun/2026', s:'todo'},
+  {n:'6.3',  t:'Laboratórios de informática, equipamentos, redes',             r:'Profs. TI (NDE)',                                     co:'Wanderson Oliveira (Téc. Adm.)',                g:'seringueira', f:'Fase 2', p:'Jun/2026', s:'todo'},
+  {n:'6.4',  t:'Laboratórios didáticos (formação básica e específica)',        r:'Profs. TI (NDE)',                                     co:'Valnei de Lima Oliveira (Téc. Adm.)',            g:'seringueira', f:'Fase 2', p:'Jun/2026', s:'todo'},
+  {n:'6.5',  t:'Biblioteca — espaço físico e demonstrativo do acervo',        r:'Fernanda Leite Dias (Bibliotecária)',                 co:'-',                                             g:'seringueira', f:'Fase 2', p:'Jun/2026', s:'todo'},
+  {n:'8',    t:'Base legal — fundamentação legislativa completa',              r:'Neemias Hitotuzi',                                    co:'Wanderson Oliveira (Téc. Adm.)',                g:'samauma',     f:'Fase 1', p:'Mar/2026', s:'done'},
+  {n:'9',    t:'Referências bibliográficas do PPC',                            r:'Neemias Hitotuzi',                                    co:'Fernanda Leite Dias (Bibliotecária)',            g:'samauma',     f:'Fase 3', p:'Ago/2026', s:'review'},
+  {n:'10',   t:'Planos de disciplina — TODOS os componentes curriculares',     r:'Profs. TI: Paulo, Geane, Washington, Juliano, Levy (NDE)', co:'Neemias Hitotuzi (NDE — coordena); Rosangela Schmidt (revisão ped.)', g:'castanheira', f:'Fase 2', p:'Jun/2026', s:'todo'},
+  {n:'Bib',  t:'Bibliografias básica e complementar por componente',           r:'Fernanda Leite Dias (Bibliotecária)',                 co:'Todos os docentes (enviam referências)',         g:'seringueira', f:'Fase 2', p:'Jun/2026', s:'todo'},
 ];
 
-const STATUS0 = {'—':'done','1':'done','2.1':'done','2.2':'done','2.4':'done','8':'done',
-  '2.3':'review','2.5':'review','9':'review','2.6':'progress','3.2':'progress','4':'progress'};
+// Status inicial vem do campo .s de cada seção
+const STATUS0 = Object.fromEntries(SECOES_BASE.map(s=>[s.n, s.s]));
 
 const DIAS_SEMANA = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -755,7 +756,7 @@ async function goto(id){
 async function setupInicial(){
   showToast('⚙ Iniciando setup...'); 
   // 1. Seções
-  const secsRows=SECOES_BASE.map(s=>({num:s.n,titulo:s.t,responsavel:s.r,co_responsavel:'',fase:s.f,prazo:s.p,grupo:s.g,status:STATUS0[s.n]||'todo',updated_by:'Sistema',updated_at:new Date().toISOString()}));
+  const secsRows=SECOES_BASE.map(s=>({num:s.n,titulo:s.t,responsavel:s.r,co_responsavel:s.co||'',fase:s.f,prazo:s.p,grupo:s.g,status:s.s||'todo',updated_by:'Sistema',updated_at:new Date().toISOString()}));
   await db.upsert('secoes',secsRows);
   // 2. Reuniões (gerar próximas 12 semanas)
   await gerarReunioesIniciais();
@@ -764,24 +765,54 @@ async function setupInicial(){
   goto('dash-pres');
 }
 
+// d) Cronograma automático até o prazo final da comissão (set/2026 = 180 dias a partir de 13/mar/2026)
+// Configuração dos grupos: dia da semana (0=Dom,1=Seg,...6=Sáb), hora início, hora fim
+const GRUPOS_CONFIG = {
+  samauma:     {diaSemana:3, hIni:'16:00', hFim:'17:00'}, // Quarta 16h
+  castanheira: {diaSemana:4, hIni:'10:00', hFim:'11:00'}, // Quinta 10h
+  seringueira: {diaSemana:4, hIni:'15:00', hFim:'16:00'}, // Quinta 15h
+};
+const PRAZO_FINAL = new Date('2026-09-09'); // 180 dias de 13/mar/2026
+
 async function gerarReunioesIniciais(){
-  const hoje=new Date('2026-03-25');
-  const reunioesRows=[];
-  let num=1;
-  for(let w=0;w<12;w++){
-    const base=new Date(hoje); base.setDate(base.getDate()+(w*7));
-    // Samaúma: Quarta 16h
-    const qua=new Date(base); const diffQua=(3-qua.getDay()+7)%7; qua.setDate(qua.getDate()+diffQua);
-    reunioesRows.push({grupo:'samauma',numero:num,data_reuniao:fmt_date(qua),hora_inicio:'16:00',hora_fim:'17:00',local_reuniao:'Sala de Reuniões — Campus Guajará-Mirim',pauta:`Reunião nº ${num} — Grupo Samaúma`,status:'agendada'});
-    // Castanheira: Quinta 10h
-    const qui1=new Date(base); const diffQui=(4-qui1.getDay()+7)%7; qui1.setDate(qui1.getDate()+diffQui);
-    reunioesRows.push({grupo:'castanheira',numero:num,data_reuniao:fmt_date(qui1),hora_inicio:'10:00',hora_fim:'11:00',local_reuniao:'Sala de Reuniões — Campus Guajará-Mirim',pauta:`Reunião nº ${num} — Grupo Castanheira`,status:'agendada'});
-    // Seringueira: Quinta 15h
-    const qui2=new Date(qui1);
-    reunioesRows.push({grupo:'seringueira',numero:num,data_reuniao:fmt_date(qui2),hora_inicio:'15:00',hora_fim:'16:00',local_reuniao:'Sala de Reuniões — Campus Guajará-Mirim',pauta:`Reunião nº ${num} — Grupo Seringueira`,status:'agendada'});
-    num++;
+  const hoje = new Date();
+  hoje.setHours(0,0,0,0);
+  const reunioesRows = [];
+  const numPorGrupo = {samauma:1, castanheira:1, seringueira:1};
+
+  // Iniciar na semana atual
+  let curSeg = new Date(hoje);
+  curSeg.setDate(curSeg.getDate() - ((curSeg.getDay()+6)%7)); // recuar para segunda
+
+  while(curSeg <= PRAZO_FINAL){
+    for(const [gk, cfg] of Object.entries(GRUPOS_CONFIG)){
+      const dt = new Date(curSeg);
+      // avançar até o dia da semana correto
+      dt.setDate(dt.getDate() + ((cfg.diaSemana - curSeg.getDay() + 7) % 7));
+      if(dt > PRAZO_FINAL) continue;
+      if(dt < hoje) { numPorGrupo[gk]++; continue; } // pular passadas mas contar
+      const g = GRUPOS_INFO[gk];
+      reunioesRows.push({
+        grupo: gk,
+        numero: numPorGrupo[gk],
+        data_reuniao: fmt_date(dt),
+        hora_inicio: cfg.hIni,
+        hora_fim: cfg.hFim,
+        local_reuniao: 'Sala de Reuniões — Campus Guajará-Mirim',
+        pauta: `Reunião nº ${numPorGrupo[gk]} — ${g.nome}`,
+        status: 'agendada'
+      });
+      numPorGrupo[gk]++;
+    }
+    curSeg.setDate(curSeg.getDate() + 7); // próxima semana
   }
-  await db.upsert('reunioes',reunioesRows);
+
+  if(!reunioesRows.length){ showToast('⚠ Nenhuma reunião gerada (prazo expirado?).'); return; }
+  // Inserir em lotes de 20
+  for(let i=0; i<reunioesRows.length; i+=20){
+    await db.upsert('reunioes', reunioesRows.slice(i,i+20));
+  }
+  showToast(`✅ ${reunioesRows.length} reuniões geradas até ${PRAZO_FINAL.toLocaleDateString('pt-BR')}`);
 }
 
 function fmt_date(d){return d.toISOString().split('T')[0];}
@@ -792,7 +823,7 @@ function fmt_date(d){return d.toISOString().split('T')[0];}
 async function loadSections(){
   const {data}=await db.sel('secoes','select=*&order=num');
   if(data&&data.length){secsData={}; data.forEach(r=>secsData[r.num]=r);}
-  else{secsData={}; SECOES_BASE.forEach(s=>secsData[s.n]={num:s.n,status:STATUS0[s.n]||'todo',responsavel:s.r,grupo:s.g,titulo:s.t,prazo:s.p});}
+  else{secsData={}; SECOES_BASE.forEach(s=>secsData[s.n]={num:s.n,status:s.s||'todo',responsavel:s.r,co_responsavel:s.co||'',grupo:s.g,titulo:s.t,prazo:s.p,fase:s.f});}
 }
 
 // ════════════════════════════════════════════════════════════
@@ -975,16 +1006,33 @@ async function renderDashMem(ca, ta){
 // ════════════════════════════════════════════════════════════
 // SEÇÕES — PRESIDENTE (completo)
 // ════════════════════════════════════════════════════════════
-let secFilter='all', secQuery='';
+let secFilter='all', secQuery='', secMembro='';
+
+// c) Lista de nomes dos membros para filtro por membro
+function getMembrosNomes(){
+  return [...new Set(SECOES_BASE.flatMap(s=>[s.r,s.co||'']).join('|').split('|').map(n=>n.split('(')[0].split('+')[0].split('—')[0].split('/')[0].trim()).filter(n=>n&&n.length>3&&n!=='-'))].sort();
+}
+
 async function renderSections(ca, ta){
-  ta.innerHTML=`<button class="btn btn-p" onclick="setupInicial()">↻ Recarregar</button>`;
+  ta.innerHTML=`<button class="btn btn-p" onclick="setupInicial()">↻ Recarregar seções</button>`;
+  const membrosNomes = getMembrosNomes();
   ca.innerHTML=`
     <p class="ph">Seções do PPC</p>
-    <p class="ps">39 seções · Resolução nº 34/CONSUP/IFRO · Clique para expandir e editar</p>
-    <div class="sb"><span style="color:var(--tx3)">🔍</span><input type="text" placeholder="Buscar seção ou responsável..." oninput="secQuery=this.value;renderSecList()"></div>
-    <div class="fr">
-      ${['all','done','progress','review','todo'].map(f=>`<div class="fc ${secFilter===f?'active':''}" onclick="secFilter='${f}';document.querySelectorAll('.fr .fc').forEach(e=>e.classList.remove('active'));this.classList.add('active');renderSecList()">${{all:'Todas',done:'✓ Prontas',progress:'↗ Em andamento',review:'⚠ Revisão',todo:'○ Não iniciadas'}[f]}</div>`).join('')}
-      ${['samauma','castanheira','seringueira'].map(g=>`<div class="fc" onclick="secFilter='${g}';document.querySelectorAll('.fr .fc').forEach(e=>e.classList.remove('active'));this.classList.add('active');renderSecList()">${GRUPOS_INFO[g].emoji} ${GRUPOS_INFO[g].nome}</div>`).join('')}
+    <p class="ps">${SECOES_BASE.length} seções · Resolução nº 34/CONSUP/IFRO · Presidente pode editar responsável e prazo</p>
+    <div class="sb"><span style="color:var(--tx3)">🔍</span>
+      <input type="text" id="sec-q" placeholder="Buscar por título, número ou responsável..."
+        oninput="secQuery=this.value;secMembro='';document.getElementById('sec-mb').value='';renderSecList()">
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:11px;align-items:center">
+      <span style="font-size:11px;font-weight:600;color:var(--tx3);white-space:nowrap">🔎 Por membro:</span>
+      <select id="sec-mb" class="ssel" style="flex:1;max-width:280px" onchange="secMembro=this.value;secQuery='';document.getElementById('sec-q').value='';renderSecList()">
+        <option value="">— Todos os membros —</option>
+        ${membrosNomes.map(n=>`<option value="${n}">${n}</option>`).join('')}
+      </select>
+    </div>
+    <div class="fr" id="sec-filters">
+      ${['all','done','progress','review','todo'].map(f=>`<div class="fc ${secFilter===f?'active':''}" onclick="secFilter='${f}';document.querySelectorAll('#sec-filters .fc').forEach(e=>e.classList.remove('active'));this.classList.add('active');renderSecList()">${{all:'Todas',done:'✓ Prontas',progress:'↗ Em andamento',review:'⚠ Revisão',todo:'○ Não iniciadas'}[f]}</div>`).join('')}
+      ${['samauma','castanheira','seringueira'].map(g=>`<div class="fc" onclick="secFilter='${g}';document.querySelectorAll('#sec-filters .fc').forEach(e=>e.classList.remove('active'));this.classList.add('active');renderSecList()">${GRUPOS_INFO[g].emoji} ${GRUPOS_INFO[g].nome}</div>`).join('')}
     </div>
     <div id="sec-list"></div>
   `;
@@ -994,32 +1042,73 @@ async function renderSections(ca, ta){
 function renderSecList(){
   const el=document.getElementById('sec-list'); if(!el) return;
   const q=secQuery.toLowerCase();
+  const mb=secMembro.toLowerCase();
   const fl=SECOES_BASE.filter(s=>{
     const st=secsData[s.n]?.status||STATUS0[s.n]||'todo';
-    const mq=!q||s.t.toLowerCase().includes(q)||s.r.toLowerCase().includes(q)||s.n.toLowerCase().includes(q);
-    if(secFilter==='all') return mq;
-    if(['samauma','castanheira','seringueira'].includes(secFilter)) return mq&&s.g===secFilter;
-    return mq&&st===secFilter;
+    const resp=(secsData[s.n]?.responsavel||s.r||'').toLowerCase();
+    const co=(secsData[s.n]?.co_responsavel||s.co||'').toLowerCase();
+    const mq=!q||(s.t.toLowerCase().includes(q)||resp.includes(q)||s.n.toLowerCase().includes(q));
+    const mbq=!mb||(resp.includes(mb)||co.includes(mb));
+    if(!mq||!mbq) return false;
+    if(secFilter==='all') return true;
+    if(['samauma','castanheira','seringueira'].includes(secFilter)) return s.g===secFilter;
+    return st===secFilter;
   });
-  if(!fl.length){el.innerHTML=`<div class="empty">Nenhuma seção encontrada.</div>`;return;}
-  el.innerHTML=fl.map(s=>{
+
+  const total=fl.length;
+  if(!total){el.innerHTML=`<div class="empty">Nenhuma seção encontrada.</div>`;return;}
+
+  el.innerHTML=`<div style="font-size:11px;color:var(--tx3);margin-bottom:8px">${total} seção(ões) encontrada(s)</div>`
+    + fl.map(s=>{
     const st=secsData[s.n]?.status||STATUS0[s.n]||'todo';
-    const g=GRUPOS_INFO[s.g];
+    const g=GRUPOS_INFO[s.g]||{};
+    const resp=secsData[s.n]?.responsavel||s.r||'';
+    const co=secsData[s.n]?.co_responsavel||s.co||'';
+    const prazo=secsData[s.n]?.prazo||s.p||'';
+    const upBy=secsData[s.n]?.updated_by;
     return `<div class="card">
       <div class="ch" onclick="tgCB(this)">
         <div class="sn">${s.n}</div>
-        <div class="si"><div class="tt">${s.t}</div><div class="st">${s.r.split('(')[0].split('+')[0].trim().substring(0,30)} · ${s.p}</div></div>
+        <div class="si">
+          <div class="tt">${s.t}</div>
+          <div class="st">${resp.split('(')[0].split('+')[0].split('—')[0].trim().substring(0,35)} · ${prazo}${upBy?' · '+upBy.split(' ')[0]:''}</div>
+        </div>
         <div class="cr">
-          ${g?`<span class="badge b${s.g}">${g.emoji} ${g.nome}</span>`:''}
+          ${s.g?`<span class="badge b${s.g}">${g.emoji||''} ${g.nome||s.g}</span>`:''}
           ${statusBadge(st, s.n)}
           <span style="color:var(--tx3);font-size:11px">▼</span>
         </div>
       </div>
       <div class="cb">
         <div class="dg2">
-          <div class="di"><div class="dl">Responsável</div><div class="dv">${s.r}</div></div>
-          <div class="di"><div class="dl">Grupo</div><div class="dv">${g?g.emoji+' '+g.nome:'—'}</div></div>
-          <div class="di"><div class="dl">Prazo</div><div class="dv">${s.p}</div></div>
+          <!-- b) Responsável editável pelo presidente -->
+          <div class="di" style="grid-column:1/-1">
+            <div class="dl">Responsável principal</div>
+            <div class="dv" style="display:flex;gap:7px;align-items:center">
+              <input type="text" id="resp-${s.n}" value="${esc(resp)}"
+                style="flex:1;padding:6px 9px;border:1.5px solid var(--brd2);border-radius:7px;font-size:12px;font-family:inherit"
+                ${!isPresident()?'readonly':''} placeholder="Responsável principal">
+              ${isPresident()?`<button class="btn btn-p" style="padding:5px 11px;font-size:11px" onclick="salvarRespPrazo('${s.n}')">Salvar</button>`:''}
+            </div>
+          </div>
+          <div class="di">
+            <div class="dl">Co-responsável</div>
+            <div class="dv">
+              <input type="text" id="co-${s.n}" value="${esc(co)}"
+                style="width:100%;padding:6px 9px;border:1.5px solid var(--brd2);border-radius:7px;font-size:12px;font-family:inherit"
+                ${!isPresident()?'readonly':''} placeholder="Co-responsável">
+            </div>
+          </div>
+          <div class="di">
+            <div class="dl">Prazo</div>
+            <div class="dv">
+              <input type="text" id="prazo-${s.n}" value="${esc(prazo)}"
+                style="width:100%;padding:6px 9px;border:1.5px solid var(--brd2);border-radius:7px;font-size:12px;font-family:inherit"
+                ${!isPresident()?'readonly':''} placeholder="Ex: Jun/2026">
+            </div>
+          </div>
+          <div class="di"><div class="dl">Grupo</div><div class="dv">${g.emoji||''} ${g.nome||s.g||'—'}</div></div>
+          <div class="di"><div class="dl">Fase</div><div class="dv">${s.f}</div></div>
           <div class="di"><div class="dl">Status</div><div class="dv">
             <select class="ssel" onchange="updStatus('${s.n}',this.value)">
               <option value="todo"     ${st==='todo'    ?'selected':''}>○ Não iniciado</option>
@@ -1029,17 +1118,39 @@ function renderSecList(){
             </select>
           </div></div>
         </div>
-        <div class="ca" id="ca-${s.n}">
+        <div class="ca">
           <div style="font-size:11px;font-weight:700;color:var(--tx2);margin-bottom:7px;text-transform:uppercase;letter-spacing:.05em">Comentários</div>
           <div id="cm-list-${s.n}"><div class="ld" style="padding:0"><div class="sp"></div></div></div>
           <div style="display:flex;gap:7px;margin-top:8px;align-items:flex-end">
-            <textarea id="cmi-${s.n}" placeholder="Comentar..." style="flex:1;height:48px;resize:none"></textarea>
+            <textarea id="cmi-${s.n}" placeholder="Comentar sobre esta seção..." style="flex:1;height:48px;resize:none"></textarea>
             <button class="btn btn-p" style="padding:6px 11px" onclick="postComment('${s.n}')">Enviar</button>
           </div>
         </div>
       </div>
     </div>`;
   }).join('');
+}
+
+// b) Salvar responsável e prazo editados pelo presidente
+async function salvarRespPrazo(num){
+  if(!isPresident()) return;
+  const resp=document.getElementById('resp-'+num)?.value?.trim()||'';
+  const co=document.getElementById('co-'+num)?.value?.trim()||'';
+  const prazo=document.getElementById('prazo-'+num)?.value?.trim()||'';
+  if(!resp){showToast('❌ Responsável não pode ser vazio.');return;}
+  const now=new Date().toISOString();
+  const sec=SECOES_BASE.find(s=>s.n===num)||{};
+  await db.upsert('secoes',{
+    num, responsavel:resp, co_responsavel:co, prazo,
+    titulo:secsData[num]?.titulo||sec.t||'',
+    fase:secsData[num]?.fase||sec.f||'',
+    grupo:secsData[num]?.grupo||sec.g||'',
+    status:secsData[num]?.status||sec.s||'todo',
+    updated_by:curProfile.full_name, updated_at:now
+  });
+  if(!secsData[num]) secsData[num]={};
+  secsData[num].responsavel=resp; secsData[num].co_responsavel=co; secsData[num].prazo=prazo;
+  showToast('✓ Responsável e prazo atualizados!');
 }
 
 // ════════════════════════════════════════════════════════════
@@ -1211,20 +1322,42 @@ async function editarMembro(id){
 async function salvarMembro(){
   const nome=v('mb-nome'), email=v('mb-email'), funcao=v('mb-funcao'), cargo=v('mb-cargo'), grupo=v('mb-grupo');
   if(!nome||!email){showToast('❌ Nome e e-mail são obrigatórios.');return;}
+  const btn=document.getElementById('mb-save-btn');
+  btn.disabled=true; btn.textContent='Salvando...';
   if(editingMembro){
     await db.update('profiles',`id=eq.${editingMembro}`,{full_name:nome,email,funcao,cargo,grupo});
     showToast('✓ Membro atualizado!');
   } else {
-    // Criar usuário via auth (signup)
     const {data,error}=await sbSignUp(email,SENHA_PADRAO,nome);
-    if(error){showToast('❌ Erro ao criar conta: '+JSON.stringify(error));return;}
-    if(data?.user){
-      await db.upsert('profiles',{id:data.user.id,full_name:nome,email,funcao,cargo,grupo,role:'membro',senha_padrao:true});
+    if(error){
+      const emsg=JSON.stringify(error);
+      btn.disabled=false; btn.textContent='Cadastrar membro';
+      if(emsg.includes('over_email_send_rate_limit')||emsg.includes('429')){
+        document.getElementById('mb-senha-info').outerHTML=
+          `<div class="alert-box" id="mb-senha-info">
+            <strong>⚠ Limite de e-mails atingido.</strong> Para cadastrar membros sem enviar e-mail:<br><br>
+            Supabase → <strong>Authentication → Providers → Email</strong> → desative <strong>"Confirm email"</strong> → Save.<br>
+            Depois tente novamente.
+          </div>`;
+        return;
+      }
+      if(emsg.includes('already registered')){
+        await db.upsert('profiles',{full_name:nome,email,funcao,cargo,grupo,role:'membro',senha_padrao:true});
+        showToast('✓ Perfil atualizado! Membro pode entrar com a senha que já possui.');
+        closeModal('modal-membro'); goto('members'); return;
+      }
+      showToast('❌ Erro: '+emsg.substring(0,80)); return;
     }
-    showToast('✓ Membro cadastrado! Senha padrão: ppc@2026');
+    const userId=data?.user?.id||data?.session?.user?.id;
+    if(userId){
+      await db.upsert('profiles',{id:userId,full_name:nome,email,funcao,cargo,grupo,role:'membro',senha_padrao:true});
+      showToast('✓ Membro cadastrado! Senha padrão: ppc@2026');
+    } else {
+      showToast('⚠ Conta criada mas e-mail de confirmação enviado. Desative "Confirm email" no Supabase.',6000);
+    }
   }
-  closeModal('modal-membro');
-  goto('members');
+  btn.disabled=false; btn.textContent='Cadastrar membro';
+  closeModal('modal-membro'); goto('members');
 }
 
 // ════════════════════════════════════════════════════════════
@@ -1653,15 +1786,21 @@ async function postComment(num){
 // ════════════════════════════════════════════════════════════
 async function updStatus(num, val){
   const now=new Date().toISOString(); const user=curProfile.full_name||'Usuário';
+  const sec=SECOES_BASE.find(s=>s.n===num)||{};
   if(!secsData[num]) secsData[num]={};
   secsData[num].status=val; secsData[num].updated_by=user;
-  const sec=SECOES_BASE.find(s=>s.n===num);
-  await db.upsert('secoes',{num,status:val,updated_by:user,updated_at:now,titulo:sec?.t,responsavel:sec?.r,fase:sec?.f,prazo:sec?.p,grupo:sec?.g});
-  await db.insert('atividades',{user_name:user,user_id:curUser.id,secao_num:num,acao:`alterou status → ${val}`,created_at:now});
+  await db.upsert('secoes',{
+    num, status:val, updated_by:user, updated_at:now,
+    titulo:    secsData[num]?.titulo    || sec.t || '',
+    responsavel: secsData[num]?.responsavel || sec.r || '',
+    co_responsavel: secsData[num]?.co_responsavel || sec.co || '',
+    fase:      secsData[num]?.fase      || sec.f || '',
+    prazo:     secsData[num]?.prazo     || sec.p || '',
+    grupo:     secsData[num]?.grupo     || sec.g || '',
+  });
+  await db.insert('atividades',{user_name:user,user_id:curUser?.id,secao_num:num,acao:`alterou status → ${val}`,created_at:now});
   showToast('✓ Status salvo!');
-  // Atualizar badge inline
-  document.querySelectorAll(`#sec-list .sn,#sec-list`).forEach(()=>{});
-  document.getElementById('d-done') && refreshDashMetrics();
+  refreshDashMetrics();
 }
 
 function refreshDashMetrics(){
