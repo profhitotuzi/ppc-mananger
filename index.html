@@ -2291,30 +2291,48 @@ function insertTable(uid){
 }
 
 // ── Render principal do editor ──────────────────────────────
-async function renderEditorPPC(ca, ta){
-  const myName  = curProfile?.full_name || '';
-  const myFirst = myName.split(' ')[0].toLowerCase();
-  const isPres  = isPresident();
+// Verificar se um usuário pode EDITAR uma seção específica
+function podePedir(uid){
+  if(isPresident()) return true;
+  const s   = SECOES_BASE.find(x=>x.uid===uid)||{};
+  const myName = (curProfile?.full_name||'').toLowerCase();
+  const resp   = (secsData[uid]?.responsavel||s.r||'').toLowerCase();
+  const co     = (secsData[uid]?.co_responsavel||s.co||'').toLowerCase();
+  // Verificar se o nome completo ou ao menos nome+sobrenome estão presentes
+  const partes = myName.split(' ').filter(p=>p.length>2);
+  return partes.some(p => resp.includes(p) || co.includes(p));
+}
 
-  // Presidente vê todas; membro vê só as suas
+async function renderEditorPPC(ca, ta){
+  const myName = curProfile?.full_name || '';
+  const isPres = isPresident();
+
+  // Presidente vê todas; membro vê APENAS as suas
   const lista = isPres
     ? SECOES_BASE
-    : SECOES_BASE.filter(s =>
-        (secsData[s.uid]?.responsavel||s.r||'').toLowerCase().includes(myFirst) ||
-        (secsData[s.uid]?.co_responsavel||s.co||'').toLowerCase().includes(myFirst)
-      );
+    : SECOES_BASE.filter(s => podePedir(s.uid));
 
   if(isPres){
     ta.innerHTML = `<button class="btn btn-p" onclick="goto('gerar-doc')">📄 Gerar Documento</button>`;
   }
 
-  // Agrupar por grupo
   const grupos = ['samauma','castanheira','seringueira'];
   let html = `
     <p class="ph">Editor do PPC</p>
-    <p class="ps">${isPres?`${lista.length} seções editáveis`:`${lista.length} seções atribuídas a você`} — conteúdo salvo automaticamente</p>
-    <div class="info-box">✏️ Clique em qualquer seção para editar. O conteúdo é salvo automaticamente após 1,5 segundo sem digitar.</div>
+    <p class="ps">${isPres
+      ? `${lista.length} seções editáveis — presidente`
+      : `${lista.length} seções atribuídas a você`}
+      · conteúdo salvo automaticamente</p>
+    ${isPres
+      ? `<div class="info-box">✏️ Você pode editar todas as seções e gerar o documento final.</div>`
+      : `<div class="info-box">✏️ Você pode editar apenas as seções atribuídas a você como responsável ou co-responsável. ${lista.length===0?'<strong>Nenhuma seção foi atribuída ainda — aguarde o presidente definir as atribuições.</strong>':''}</div>`
+    }
   `;
+
+  if(lista.length === 0){
+    ca.innerHTML = html + `<div class="empty">Nenhuma seção atribuída a você ainda.</div>`;
+    return;
+  }
 
   for(const gk of grupos){
     const gsecs = lista.filter(s => s.g === gk);
@@ -2384,34 +2402,55 @@ async function toggleEditor(uid, headerEl){
 
   if(loadEl) loadEl.remove();
 
-  area.innerHTML = `
-    <div style="padding:10px 14px;background:var(--acc-xl);border-bottom:1px solid var(--brd);font-size:11px;color:var(--tx2)">
-      <strong>[${s.n}]</strong> ${esc(s.t)} &nbsp;·&nbsp;
-      <span style="color:var(--tx3)">Responsável: ${esc(resp)}</span>
-      ${prazo?`&nbsp;·&nbsp; <span style="color:var(--warn)">Prazo: ${new Date(prazo+'T12:00:00').toLocaleDateString('pt-BR')}</span>`:''}
-    </div>
-    ${buildToolbar(uid)}
-    <div class="editor-body"
-      id="editor-body-${uid}"
-      contenteditable="true"
-      data-placeholder="Digite o conteúdo desta seção aqui..."
-      onfocus="_activeEditorUid='${uid}'"
-      oninput="scheduleAutoSave('${uid}')"
-    >${conteudo||''}</div>
-    <div class="editor-footer">
-      <div class="save-status saved" id="save-status-${uid}">${conteudo?'✓ Salvo':'○ Vazio'}</div>
-      <div style="display:flex;gap:6px">
-        <button class="btn btn-g" style="padding:4px 10px;font-size:11px"
-          onclick="salvarConteudo('${uid}', document.getElementById('editor-body-${uid}').innerHTML).then(()=>{const el=document.getElementById('save-status-${uid}');if(el){el.textContent='✓ Salvo';el.className='save-status saved';}})">
-          💾 Salvar
-        </button>
-        <button class="btn btn-g" style="padding:4px 10px;font-size:11px"
-          onclick="limparEditor('${uid}')">
-          🗑 Limpar
-        </button>
+  const podeEditar = podePedir(uid);
+
+  if(podeEditar){
+    // ── Modo edição ────────────────────────────────────────
+    area.innerHTML = `
+      <div style="padding:10px 14px;background:var(--acc-xl);border-bottom:1px solid var(--brd);font-size:11px;color:var(--tx2)">
+        <strong>[${s.n}]</strong> ${esc(s.t)} &nbsp;·&nbsp;
+        <span style="color:var(--tx3)">Responsável: ${esc(resp)}</span>
+        ${prazo?`&nbsp;·&nbsp; <span style="color:var(--warn)">Prazo: ${new Date(prazo+'T12:00:00').toLocaleDateString('pt-BR')}</span>`:''}
       </div>
-    </div>
-  `;
+      ${buildToolbar(uid)}
+      <div class="editor-body"
+        id="editor-body-${uid}"
+        contenteditable="true"
+        data-placeholder="Digite o conteúdo desta seção aqui..."
+        onfocus="_activeEditorUid='${uid}'"
+        oninput="scheduleAutoSave('${uid}')"
+      >${conteudo||''}</div>
+      <div class="editor-footer">
+        <div class="save-status saved" id="save-status-${uid}">${conteudo?'✓ Salvo':'○ Vazio'}</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-g" style="padding:4px 10px;font-size:11px"
+            onclick="salvarConteudo('${uid}', document.getElementById('editor-body-${uid}').innerHTML).then(()=>{const el=document.getElementById('save-status-${uid}');if(el){el.textContent='✓ Salvo';el.className='save-status saved';}})">
+            💾 Salvar
+          </button>
+          <button class="btn btn-g" style="padding:4px 10px;font-size:11px"
+            onclick="limparEditor('${uid}')">
+            🗑 Limpar
+          </button>
+        </div>
+      </div>
+    `;
+  } else {
+    // ── Modo somente leitura (presidente sempre chega aqui nunca) ──
+    area.innerHTML = `
+      <div style="padding:10px 14px;background:var(--surf2);border-bottom:1px solid var(--brd);font-size:11px;color:var(--tx2)">
+        <strong>[${s.n}]</strong> ${esc(s.t)}
+        <span style="margin-left:8px;background:var(--warn-l);color:var(--warn);font-size:10px;font-weight:600;padding:2px 7px;border-radius:6px">🔒 Somente leitura</span>
+      </div>
+      <div class="editor-body" style="background:var(--surf2);color:var(--tx2);cursor:not-allowed;min-height:60px">
+        ${conteudo
+          ? conteudo
+          : '<span style="color:var(--tx3);font-style:italic">Sem conteúdo ainda.</span>'}
+      </div>
+      <div class="editor-footer">
+        <span style="font-size:11px;color:var(--tx3)">Responsável: ${esc(resp)} — apenas o responsável pode editar esta seção.</span>
+      </div>
+    `;
+  }
 
   // Indicador de conteúdo carregado
   const dot = document.getElementById('editor-loaded-'+uid);
@@ -2433,6 +2472,16 @@ function limparEditor(uid){
 // GERAÇÃO DE DOCUMENTO — .docx e PDF
 // ════════════════════════════════════════════════════════════
 async function renderGerarDoc(ca, ta){
+  // Apenas o presidente pode gerar documentos
+  if(!isPresident()){
+    ca.innerHTML = `
+      <p class="ph">Gerar Documento</p>
+      <div class="alert-box" style="max-width:480px">
+        🔒 A geração de documentos é exclusiva do Presidente da Comissão.<br><br>
+        Para gerar o .docx ou PDF do PPC, entre com a conta do presidente.
+      </div>`;
+    return;
+  }
   ta.innerHTML = `
     <button class="btn btn-p" id="btn-gerar-docx" onclick="iniciarGeracaoDocx()">⬇ Gerar .docx</button>
     <button class="btn btn-g" onclick="gerarPDF()">🖨 Imprimir / PDF</button>
