@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PPC Manager · IFRO Guajará-Mirim</title>
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -238,6 +239,57 @@ input:focus,select:focus,textarea:focus{border-color:var(--acc);}
   .content{padding:14px;} .topbar{padding:10px 14px;}
 }
 @media(max-width:480px){.mets{grid-template-columns:1fr 1fr;}}
+
+/* ── EDITOR PPC ── */
+.editor-wrap{background:var(--surf);border:1.5px solid var(--brd2);border-radius:var(--r);overflow:hidden;margin-bottom:12px;}
+.editor-toolbar{display:flex;gap:3px;padding:6px 8px;background:var(--surf2);border-bottom:1px solid var(--brd);flex-wrap:wrap;}
+.etb{background:none;border:1px solid transparent;border-radius:5px;cursor:pointer;font-size:12px;padding:3px 7px;color:var(--tx2);font-family:inherit;transition:all .15s;}
+.etb:hover{background:var(--brd);color:var(--tx);}
+.etb.active{background:var(--acc-l);color:var(--acc);border-color:var(--acc);}
+.etb-sep{width:1px;background:var(--brd2);margin:2px 3px;}
+.editor-body{min-height:120px;max-height:400px;overflow-y:auto;padding:12px 14px;font-size:13px;line-height:1.8;outline:none;color:var(--tx);}
+.editor-body:focus{border-color:var(--acc);}
+.editor-body[contenteditable]:empty:before{content:attr(data-placeholder);color:var(--tx3);pointer-events:none;}
+.editor-body h2{font-size:15px;font-weight:700;margin:10px 0 5px;}
+.editor-body h3{font-size:14px;font-weight:600;margin:8px 0 4px;}
+.editor-body p{margin-bottom:8px;}
+.editor-body ul,
+.editor-body ol{padding-left:20px;margin-bottom:8px;}
+.editor-body li{margin-bottom:3px;}
+.editor-body table{border-collapse:collapse;width:100%;margin-bottom:8px;font-size:12px;}
+.editor-body th{background:var(--acc);color:#fff;padding:6px 8px;border:1px solid var(--brd2);}
+.editor-body td{padding:6px 8px;border:1px solid var(--brd2);}
+.editor-footer{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:var(--surf2);border-top:1px solid var(--brd);font-size:11px;color:var(--tx3);}
+.save-status{display:flex;align-items:center;gap:5px;font-size:11px;}
+.save-status.saved{color:var(--grn);}
+.save-status.saving{color:var(--warn);}
+.save-status.unsaved{color:var(--red);}
+
+/* ── GERAÇÃO DE DOCUMENTO ── */
+.gen-card{background:var(--surf);border:1.5px solid var(--brd2);border-radius:var(--rl);padding:16px;margin-bottom:10px;}
+.gen-check-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--brd);font-size:12px;}
+.gen-check-item:last-child{border-bottom:none;}
+.gen-check-item input[type=checkbox]{margin-top:2px;accent-color:var(--acc);flex-shrink:0;cursor:pointer;}
+.gen-check-item .gi-title{flex:1;font-weight:500;}
+.gen-check-item .gi-resp{font-size:10px;color:var(--tx3);margin-top:1px;}
+.gen-check-item .gi-status{flex-shrink:0;}
+.gen-section-group{margin-bottom:14px;}
+.gen-section-group .gsg-head{font-size:11px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.07em;padding:7px 0 5px;border-bottom:2px solid var(--brd2);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.gen-section-group .gsg-head input{accent-color:var(--acc);cursor:pointer;}
+
+/* ── MODAL PREVIEW PDF ── */
+@media print {
+  body > *:not(#pdf-print-area) { display: none !important; }
+  #pdf-print-area { display: block !important; }
+  .pdf-page { page-break-after: always; margin: 0; padding: 2cm; }
+  .pdf-page:last-child { page-break-after: avoid; }
+}
+#pdf-print-area { display: none; font-family: Arial, sans-serif; font-size: 12pt; line-height: 1.8; }
+#pdf-print-area h1 { font-size: 14pt; font-weight: bold; text-align: center; margin-bottom: 10pt; text-transform: uppercase; }
+#pdf-print-area h2 { font-size: 13pt; font-weight: bold; margin: 14pt 0 6pt; }
+#pdf-print-area h3 { font-size: 12pt; font-weight: bold; margin: 10pt 0 5pt; }
+#pdf-print-area p  { margin-bottom: 8pt; text-align: justify; }
+
 </style>
 </head>
 <body>
@@ -868,15 +920,18 @@ const PRES_VIEWS = [
   {id:'dash-pres',   ic:'◼',  label:'Dashboard geral',    section:'Principal'},
   {id:'sections',    ic:'☰',  label:'Seções do PPC',       nb:'sec-nb'},
   {id:'crud-secoes', ic:'✎',  label:'Gerenciar Seções'},
-  {id:'members',     ic:'●',  label:'Membros'},
+  {id:'editor-ppc',  ic:'📝', label:'Editor do PPC',       section:'Documento'},
+  {id:'gerar-doc',   ic:'📄', label:'Gerar .docx / PDF'},
+  {id:'members',     ic:'●',  label:'Membros',             section:'Gestão'},
   {id:'messages',    ic:'✉',  label:'Mensagens',           nb:'msg-nb'},
-  {id:'schedule',    ic:'📅', label:'Cronograma',          section:'Ferramentas'},
+  {id:'schedule',    ic:'📅', label:'Cronograma'},
   {id:'atas',        ic:'📋', label:'Atas de reunião'},
   {id:'settings',    ic:'⚙',  label:'Configurações'},
 ];
 const MEM_VIEWS = [
   {id:'dash-mem',    ic:'◼',  label:'Meu dashboard',       section:'Principal'},
   {id:'my-tasks',    ic:'☰',  label:'Minhas tarefas'},
+  {id:'editor-ppc',  ic:'📝', label:'Editor do PPC',       section:'Documento'},
   {id:'overview',    ic:'📊', label:'Visão geral'},
   {id:'messages',    ic:'✉',  label:'Mensagens',           nb:'msg-nb'},
   {id:'my-schedule', ic:'📅', label:'Minhas reuniões',      section:'Grupo'},
@@ -903,6 +958,7 @@ const VIEW_TITLES = {
   'crud-secoes':'Gerenciar Seções (CRUD)','members':'Membros da Comissão',
   'messages':'Mensagens e Avisos','schedule':'Cronograma de Reuniões','atas':'Atas de Reunião',
   'settings':'Configurações','dash-mem':'Meu Dashboard','my-tasks':'Minhas Tarefas',
+  'editor-ppc':'Editor do PPC','gerar-doc':'Gerar Documento (.docx / PDF)',
   'overview':'Visão Geral do PPC','my-schedule':'Minhas Reuniões','ata-sign':'Assinar ATA',
 };
 
@@ -927,6 +983,8 @@ async function goto(id){
     case 'my-schedule':await renderMySchedule(ca,ta); break;
     case 'atas':       await renderAtas(ca,ta);     break;
     case 'crud-secoes':await renderCrudSecoes(ca,ta); break;
+    case 'editor-ppc': await renderEditorPPC(ca,ta);  break;
+    case 'gerar-doc':  await renderGerarDoc(ca,ta);   break;
     case 'ata-sign':   await renderAtaSign(ca,ta);  break;
     case 'settings':   renderSettings(ca,ta);        break;
     default: ca.innerHTML='<div class="empty">Em desenvolvimento.</div>';
@@ -2150,6 +2208,684 @@ async function excluirSecao(){
 }
 
 
+// ════════════════════════════════════════════════════════════
+// EDITOR DO PPC — conteúdo editável por seção
+// ════════════════════════════════════════════════════════════
+let conteudosCache = {}; // uid → texto salvo
+
+async function loadConteudo(uid){
+  if(conteudosCache[uid]!==undefined) return conteudosCache[uid];
+  const {data} = await db.sel('conteudos', `secao_uid=eq.${uid}&select=conteudo`);
+  const txt = data&&data[0] ? data[0].conteudo : '';
+  conteudosCache[uid] = txt;
+  return txt;
+}
+
+async function salvarConteudo(uid, html){
+  conteudosCache[uid] = html;
+  const now = new Date().toISOString();
+  await db.upsert('conteudos', {
+    secao_uid: uid,
+    conteudo: html,
+    updated_by: curProfile?.full_name || '',
+    updated_at: now
+  });
+}
+
+// ── Auto-save com debounce ──────────────────────────────────
+const _saveTimers = {};
+function scheduleAutoSave(uid){
+  clearTimeout(_saveTimers[uid]);
+  const statusEl = document.getElementById('save-status-'+uid);
+  if(statusEl){ statusEl.textContent='● Não salvo'; statusEl.className='save-status unsaved'; }
+  _saveTimers[uid] = setTimeout(async ()=>{
+    const el = document.getElementById('editor-body-'+uid);
+    if(!el) return;
+    if(statusEl){ statusEl.textContent='⏳ Salvando...'; statusEl.className='save-status saving'; }
+    await salvarConteudo(uid, el.innerHTML);
+    if(statusEl){ statusEl.textContent='✓ Salvo'; statusEl.className='save-status saved'; }
+  }, 1500);
+}
+
+// ── Comando de formatação ───────────────────────────────────
+function fmt(cmd, val=''){
+  document.execCommand(cmd, false, val||null);
+  document.getElementById('editor-body-'+_activeEditorUid)?.focus();
+}
+let _activeEditorUid = '';
+
+function buildToolbar(uid){
+  return `<div class="editor-toolbar">
+    <button class="etb" onclick="fmt('bold')" title="Negrito"><b>B</b></button>
+    <button class="etb" onclick="fmt('italic')" title="Itálico"><i>I</i></button>
+    <button class="etb" onclick="fmt('underline')" title="Sublinhado"><u>U</u></button>
+    <div class="etb-sep"></div>
+    <button class="etb" onclick="fmt('formatBlock','h2')" title="Título 2">H2</button>
+    <button class="etb" onclick="fmt('formatBlock','h3')" title="Título 3">H3</button>
+    <button class="etb" onclick="fmt('formatBlock','p')" title="Parágrafo">¶</button>
+    <div class="etb-sep"></div>
+    <button class="etb" onclick="fmt('insertUnorderedList')" title="Lista">• Lista</button>
+    <button class="etb" onclick="fmt('insertOrderedList')" title="Numerada">1. Lista</button>
+    <div class="etb-sep"></div>
+    <button class="etb" onclick="fmt('justifyFull')" title="Justificado">≡ Justif.</button>
+    <button class="etb" onclick="fmt('justifyLeft')" title="Esquerda">« Esq.</button>
+    <div class="etb-sep"></div>
+    <button class="etb" onclick="insertTable('${uid}')" title="Inserir tabela">⊞ Tabela</button>
+  </div>`;
+}
+
+function insertTable(uid){
+  const rows = parseInt(prompt('Número de linhas:', '3')||'3');
+  const cols = parseInt(prompt('Número de colunas:', '3')||'3');
+  if(!rows||!cols) return;
+  let html = '<table><thead><tr>';
+  for(let c=0;c<cols;c++) html+=`<th>Coluna ${c+1}</th>`;
+  html+='</tr></thead><tbody>';
+  for(let r=0;r<rows;r++){
+    html+='<tr>';
+    for(let c=0;c<cols;c++) html+='<td>&nbsp;</td>';
+    html+='</tr>';
+  }
+  html+='</tbody></table>';
+  document.execCommand('insertHTML', false, html);
+}
+
+// ── Render principal do editor ──────────────────────────────
+async function renderEditorPPC(ca, ta){
+  const myName  = curProfile?.full_name || '';
+  const myFirst = myName.split(' ')[0].toLowerCase();
+  const isPres  = isPresident();
+
+  // Presidente vê todas; membro vê só as suas
+  const lista = isPres
+    ? SECOES_BASE
+    : SECOES_BASE.filter(s =>
+        (secsData[s.uid]?.responsavel||s.r||'').toLowerCase().includes(myFirst) ||
+        (secsData[s.uid]?.co_responsavel||s.co||'').toLowerCase().includes(myFirst)
+      );
+
+  if(isPres){
+    ta.innerHTML = `<button class="btn btn-p" onclick="goto('gerar-doc')">📄 Gerar Documento</button>`;
+  }
+
+  // Agrupar por grupo
+  const grupos = ['samauma','castanheira','seringueira'];
+  let html = `
+    <p class="ph">Editor do PPC</p>
+    <p class="ps">${isPres?`${lista.length} seções editáveis`:`${lista.length} seções atribuídas a você`} — conteúdo salvo automaticamente</p>
+    <div class="info-box">✏️ Clique em qualquer seção para editar. O conteúdo é salvo automaticamente após 1,5 segundo sem digitar.</div>
+  `;
+
+  for(const gk of grupos){
+    const gsecs = lista.filter(s => s.g === gk);
+    if(!gsecs.length) continue;
+    const g = GRUPOS_INFO[gk] || {};
+    html += `<div class="gen-section-group">
+      <div class="gsg-head"><span style="font-size:16px">${g.emoji||''}</span> ${g.nome||gk}</div>`;
+    for(const s of gsecs){
+      const resp = secsData[s.uid]?.responsavel || s.r || '';
+      html += `<div class="card" style="margin-bottom:8px" id="sec-editor-${s.uid}">
+        <div class="ch" onclick="toggleEditor('${s.uid}',this)">
+          <div class="sn" style="font-size:9px">${s.uid}</div>
+          <div class="si">
+            <div class="tt">[${s.n}] ${esc(s.t)}</div>
+            <div class="st">${esc(resp.split(' ')[0]+' '+(resp.split(' ')[1]||''))} · ${s.p||'—'}</div>
+          </div>
+          <div class="cr">
+            ${statusBadge(secsData[s.uid]?.status||s.s||'todo')}
+            <span id="editor-loaded-${s.uid}" style="font-size:10px;color:var(--grn);display:none">●</span>
+            <span style="color:var(--tx3);font-size:11px">▼</span>
+          </div>
+        </div>
+        <div class="cb" id="editor-area-${s.uid}">
+          <div class="ld" id="editor-loading-${s.uid}"><div class="sp"></div>Carregando...</div>
+        </div>
+      </div>`;
+    }
+    html += '</div>';
+  }
+
+  // Seções sem grupo
+  const semGrupo = lista.filter(s => !s.g || !grupos.includes(s.g));
+  if(semGrupo.length){
+    html += `<div class="gen-section-group">
+      <div class="gsg-head">📄 Outras seções</div>`;
+    for(const s of semGrupo){
+      html += `<div class="card" style="margin-bottom:8px">
+        <div class="ch" onclick="toggleEditor('${s.uid}',this)">
+          <div class="sn" style="font-size:9px">${s.uid}</div>
+          <div class="si"><div class="tt">[${s.n}] ${esc(s.t)}</div></div>
+          <div class="cr">${statusBadge(secsData[s.uid]?.status||s.s||'todo')}<span style="color:var(--tx3);font-size:11px">▼</span></div>
+        </div>
+        <div class="cb" id="editor-area-${s.uid}">
+          <div class="ld" id="editor-loading-${s.uid}"><div class="sp"></div>Carregando...</div>
+        </div>
+      </div>`;
+    }
+    html += '</div>';
+  }
+
+  ca.innerHTML = html;
+}
+
+async function toggleEditor(uid, headerEl){
+  const area = document.getElementById('editor-area-'+uid);
+  if(!area) return;
+  const isOpen = area.classList.contains('open');
+  area.classList.toggle('open');
+  if(isOpen) return; // fechando — não precisa carregar
+
+  _activeEditorUid = uid;
+  const loadEl = document.getElementById('editor-loading-'+uid);
+  const conteudo = await loadConteudo(uid);
+  const s = SECOES_BASE.find(x=>x.uid===uid)||{};
+  const resp = secsData[uid]?.responsavel || s.r || '';
+  const prazo = secsData[uid]?.prazo || s.p || '';
+
+  if(loadEl) loadEl.remove();
+
+  area.innerHTML = `
+    <div style="padding:10px 14px;background:var(--acc-xl);border-bottom:1px solid var(--brd);font-size:11px;color:var(--tx2)">
+      <strong>[${s.n}]</strong> ${esc(s.t)} &nbsp;·&nbsp;
+      <span style="color:var(--tx3)">Responsável: ${esc(resp)}</span>
+      ${prazo?`&nbsp;·&nbsp; <span style="color:var(--warn)">Prazo: ${new Date(prazo+'T12:00:00').toLocaleDateString('pt-BR')}</span>`:''}
+    </div>
+    ${buildToolbar(uid)}
+    <div class="editor-body"
+      id="editor-body-${uid}"
+      contenteditable="true"
+      data-placeholder="Digite o conteúdo desta seção aqui..."
+      onfocus="_activeEditorUid='${uid}'"
+      oninput="scheduleAutoSave('${uid}')"
+    >${conteudo||''}</div>
+    <div class="editor-footer">
+      <div class="save-status saved" id="save-status-${uid}">${conteudo?'✓ Salvo':'○ Vazio'}</div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-g" style="padding:4px 10px;font-size:11px"
+          onclick="salvarConteudo('${uid}', document.getElementById('editor-body-${uid}').innerHTML).then(()=>{const el=document.getElementById('save-status-${uid}');if(el){el.textContent='✓ Salvo';el.className='save-status saved';}})">
+          💾 Salvar
+        </button>
+        <button class="btn btn-g" style="padding:4px 10px;font-size:11px"
+          onclick="limparEditor('${uid}')">
+          🗑 Limpar
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Indicador de conteúdo carregado
+  const dot = document.getElementById('editor-loaded-'+uid);
+  if(dot && conteudo) dot.style.display='inline';
+}
+
+function limparEditor(uid){
+  if(!confirm('Limpar o conteúdo desta seção?')) return;
+  const el = document.getElementById('editor-body-'+uid);
+  if(el) el.innerHTML = '';
+  salvarConteudo(uid, '');
+  const st = document.getElementById('save-status-'+uid);
+  if(st){ st.textContent='✓ Salvo'; st.className='save-status saved'; }
+  const dot = document.getElementById('editor-loaded-'+uid);
+  if(dot) dot.style.display='none';
+}
+
+// ════════════════════════════════════════════════════════════
+// GERAÇÃO DE DOCUMENTO — .docx e PDF
+// ════════════════════════════════════════════════════════════
+async function renderGerarDoc(ca, ta){
+  ta.innerHTML = `
+    <button class="btn btn-p" id="btn-gerar-docx" onclick="iniciarGeracaoDocx()">⬇ Gerar .docx</button>
+    <button class="btn btn-g" onclick="gerarPDF()">🖨 Imprimir / PDF</button>
+  `;
+
+  // Carregar status de conteúdo de todas as seções
+  const {data:conts} = await db.sel('conteudos','select=secao_uid,conteudo,updated_by,updated_at&order=secao_uid');
+  const contMap = {};
+  (conts||[]).forEach(c => contMap[c.secao_uid] = c);
+
+  const grupos = [
+    {key:'samauma',     label:'Grupo Samaúma'},
+    {key:'castanheira', label:'Grupo Castanheira'},
+    {key:'seringueira', label:'Grupo Seringueira'},
+  ];
+
+  let html = `
+    <p class="ph">Gerar Documento</p>
+    <p class="ps">Selecione as seções para incluir no documento. Seções sem conteúdo serão puladas na geração.</p>
+
+    <div class="g2" style="margin-bottom:14px">
+      <div class="gen-card">
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px">📊 Status do conteúdo</div>
+        ${[['done','✓ Com conteúdo',SECOES_BASE.filter(s=>contMap[s.uid]?.conteudo?.trim()).length],
+           ['todo','○ Sem conteúdo',SECOES_BASE.filter(s=>!contMap[s.uid]?.conteudo?.trim()).length]]
+          .map(([cl,lbl,n])=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--brd)">
+            <span>${lbl}</span><strong style="color:var(--${cl==='done'?'grn':'tx3'})">${n}</strong>
+          </div>`).join('')}
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;font-weight:700">
+          <span>Total de seções</span><strong>${SECOES_BASE.length}</strong>
+        </div>
+      </div>
+      <div class="gen-card">
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px">⚙ Opções</div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:8px;cursor:pointer">
+          <input type="checkbox" id="opt-apenas-com-conteudo" checked style="accent-color:var(--acc)">
+          Incluir apenas seções com conteúdo
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:8px;cursor:pointer">
+          <input type="checkbox" id="opt-incluir-sem-conteudo" style="accent-color:var(--acc)">
+          Marcar seções sem conteúdo como "[Pendente]"
+        </label>
+        <div style="margin-top:10px">
+          <button class="btn btn-g" style="width:100%;font-size:11px" onclick="selecionarTodasSecoes(true)">☑ Selecionar todas</button>
+          <button class="btn btn-g" style="width:100%;font-size:11px;margin-top:5px" onclick="selecionarTodasSecoes(false)">☐ Desmarcar todas</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;margin-bottom:10px">Seções a incluir:</div>
+  `;
+
+  for(const {key, label} of grupos){
+    const gsecs = SECOES_BASE.filter(s => s.g === key);
+    if(!gsecs.length) continue;
+    const g = GRUPOS_INFO[key]||{};
+    const allUids = gsecs.map(s=>`chk-sec-${s.uid}`).join(',');
+    html += `<div class="gen-section-group">
+      <div class="gsg-head">
+        <input type="checkbox" id="chk-grp-${key}" checked
+          onchange="gsecs_${key}=document.querySelectorAll('[data-grp=${key}]');gsecs_${key}.forEach(c=>c.checked=this.checked)">
+        ${g.emoji||''} ${g.nome||label}
+        <span style="font-size:10px;color:var(--tx3);font-weight:400">(${gsecs.length} seções)</span>
+      </div>`;
+    for(const s of gsecs){
+      const temConteudo = !!(contMap[s.uid]?.conteudo?.trim());
+      const upAt = contMap[s.uid]?.updated_at;
+      html += `<div class="gen-check-item">
+        <input type="checkbox" id="chk-sec-${s.uid}" data-uid="${s.uid}" data-grp="${key}" ${temConteudo?'checked':''}>
+        <div style="flex:1">
+          <div class="gi-title"><span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--tx3)">[${s.n}]</span> ${esc(s.t)}</div>
+          <div class="gi-resp">${esc((secsData[s.uid]?.responsavel||s.r||'').split('(')[0].trim())}</div>
+        </div>
+        <div class="gi-status">
+          ${temConteudo
+            ? `<span style="color:var(--grn);font-size:10px" title="Atualizado ${upAt?timeAgo(upAt):''}">● Com conteúdo</span>`
+            : `<span style="color:var(--tx3);font-size:10px">○ Vazio</span>`}
+        </div>
+      </div>`;
+    }
+    html += '</div>';
+  }
+
+  ca.innerHTML = html;
+}
+
+function selecionarTodasSecoes(sel){
+  document.querySelectorAll('[data-uid]').forEach(c => c.checked = sel);
+  document.querySelectorAll('[id^=chk-grp-]').forEach(c => c.checked = sel);
+}
+
+// ── Iniciar geração do .docx ────────────────────────────────
+async function iniciarGeracaoDocx(){
+  // Verificar se docx.js está disponível
+  if(typeof docx === 'undefined'){
+    showToast('❌ Biblioteca docx.js não carregou. Verifique sua conexão.', 5000);
+    return;
+  }
+
+  const btn = document.getElementById('btn-gerar-docx');
+  btn.disabled = true;
+  btn.textContent = '⏳ Gerando...';
+  showToast('⏳ Preparando documento...', 10000);
+
+  try {
+    // Coletar seções selecionadas
+    const selecionados = [];
+    document.querySelectorAll('[data-uid]:checked').forEach(chk => {
+      const uid = chk.dataset.uid;
+      const sec = SECOES_BASE.find(s => s.uid === uid);
+      if(sec) selecionados.push(sec);
+    });
+
+    if(!selecionados.length){
+      showToast('❌ Selecione ao menos uma seção.');
+      btn.disabled = false; btn.textContent = '⬇ Gerar .docx';
+      return;
+    }
+
+    // Carregar conteúdos do banco
+    const uids = selecionados.map(s=>s.uid);
+    const {data:conts} = await db.sel('conteudos',`secao_uid=in.(${uids.join(',')})&select=secao_uid,conteudo`);
+    const contMap = {};
+    (conts||[]).forEach(c => contMap[c.secao_uid] = c.conteudo||'');
+
+    const apenasComConteudo = document.getElementById('opt-apenas-com-conteudo')?.checked;
+    const marcarPendente = document.getElementById('opt-incluir-sem-conteudo')?.checked;
+
+    await gerarDocx(selecionados, contMap, apenasComConteudo, marcarPendente);
+  } catch(e){
+    console.error('Erro gerando docx:', e);
+    showToast('❌ Erro ao gerar o documento: ' + e.message, 6000);
+  }
+
+  btn.disabled = false;
+  btn.textContent = '⬇ Gerar .docx';
+}
+
+// ── Converter HTML para parágrafos docx ─────────────────────
+function htmlParaDocxChildren(htmlStr){
+  const {Paragraph, TextRun, HeadingLevel, AlignmentType} = docx;
+  if(!htmlStr || !htmlStr.trim()){
+    return [new Paragraph({children:[new TextRun({text:'[Conteúdo pendente de elaboração]', italics:true, color:'888888'})], spacing:{after:120}})];
+  }
+
+  const tmp = document.createElement('div');
+  tmp.innerHTML = htmlStr;
+  const children = [];
+
+  function textRunsFromEl(el){
+    const runs = [];
+    el.childNodes.forEach(node => {
+      if(node.nodeType === 3){
+        // text node
+        const txt = node.textContent;
+        if(txt) runs.push(new TextRun({text: txt, font:'Arial', size: 24}));
+      } else if(node.nodeType === 1){
+        const tag = node.tagName.toLowerCase();
+        const bold = tag==='b'||tag==='strong';
+        const italic = tag==='i'||tag==='em';
+        const underline = tag==='u';
+        const inner = node.innerText||node.textContent||'';
+        if(inner.trim()){
+          runs.push(new TextRun({
+            text: inner, font:'Arial', size:24,
+            bold: bold||undefined, italics: italic||undefined,
+            underline: underline?{}:undefined,
+          }));
+        }
+      }
+    });
+    return runs.length ? runs : [new TextRun({text: el.innerText||el.textContent||'', font:'Arial', size:24})];
+  }
+
+  function processEl(el){
+    const tag = el.tagName?.toLowerCase();
+    if(!tag) return;
+    if(tag==='h1'||tag==='h2'||tag==='h3'){
+      const level = tag==='h1'?HeadingLevel.HEADING_2:tag==='h2'?HeadingLevel.HEADING_3:HeadingLevel.HEADING_4;
+      children.push(new Paragraph({
+        heading: level,
+        children: [new TextRun({text: el.innerText||'', bold:true, font:'Arial', size: tag==='h1'?28:26})],
+        spacing:{before:200, after:120}
+      }));
+    } else if(tag==='p'){
+      const runs = textRunsFromEl(el);
+      if(runs.length){
+        children.push(new Paragraph({
+          children: runs,
+          alignment: AlignmentType.JUSTIFIED,
+          spacing:{after:120},
+          indent:{firstLine:720}
+        }));
+      }
+    } else if(tag==='ul'||tag==='ol'){
+      el.querySelectorAll('li').forEach((li, idx) => {
+        children.push(new Paragraph({
+          children: [new TextRun({text: (tag==='ol'?`${idx+1}. `:'\u2022 ') + (li.innerText||''), font:'Arial', size:24})],
+          indent:{left:720},
+          spacing:{after:80}
+        }));
+      });
+    } else if(tag==='br'){
+      children.push(new Paragraph({children:[new TextRun({text:'', size:12})], spacing:{after:80}}));
+    } else if(tag==='div'||tag==='section'||tag==='article'){
+      el.childNodes.forEach(ch => { if(ch.nodeType===1) processEl(ch); else if(ch.nodeType===3&&ch.textContent.trim()){
+        children.push(new Paragraph({children:[new TextRun({text:ch.textContent, font:'Arial', size:24})], alignment:AlignmentType.JUSTIFIED, spacing:{after:120}}));
+      }});
+    } else {
+      const txt = el.innerText||el.textContent||'';
+      if(txt.trim()){
+        children.push(new Paragraph({children:[new TextRun({text:txt, font:'Arial', size:24})], alignment:AlignmentType.JUSTIFIED, spacing:{after:120}}));
+      }
+    }
+  }
+
+  tmp.childNodes.forEach(node => {
+    if(node.nodeType===1) processEl(node);
+    else if(node.nodeType===3&&node.textContent.trim()){
+      children.push(new Paragraph({children:[new TextRun({text:node.textContent, font:'Arial', size:24})], alignment:AlignmentType.JUSTIFIED, spacing:{after:120}}));
+    }
+  });
+
+  return children.length ? children : [new Paragraph({children:[new TextRun({text:'[Sem conteúdo]', italics:true, color:'888888'})]})];
+}
+
+// ── Gerar o arquivo .docx ────────────────────────────────────
+async function gerarDocx(secoes, contMap, apenasComConteudo, marcarPendente){
+  const {Document, Packer, Paragraph, TextRun, PageBreak, HeadingLevel,
+         AlignmentType, Header, Footer, PageNumber, NumberFormat,
+         BorderStyle} = docx;
+
+  const docChildren = [];
+
+  // ── Capa ──────────────────────────────────────────────────
+  const capaParagrafos = [
+    new Paragraph({children:[new TextRun({text:'', size:24})], spacing:{after:2000}}),
+    new Paragraph({
+      children:[new TextRun({text:'MINISTÉRIO DA EDUCAÇÃO', bold:true, font:'Arial', size:24})],
+      alignment:AlignmentType.CENTER, spacing:{after:120}
+    }),
+    new Paragraph({
+      children:[new TextRun({text:'Instituto Federal de Educação, Ciência e Tecnologia de Rondônia', bold:true, font:'Arial', size:24})],
+      alignment:AlignmentType.CENTER, spacing:{after:120}
+    }),
+    new Paragraph({
+      children:[new TextRun({text:'Campus Guajará-Mirim', bold:true, font:'Arial', size:24})],
+      alignment:AlignmentType.CENTER, spacing:{after:800}
+    }),
+    new Paragraph({
+      children:[new TextRun({text:'PROJETO PEDAGÓGICO DO CURSO', bold:true, font:'Arial', size:36})],
+      alignment:AlignmentType.CENTER, spacing:{after:200}
+    }),
+    new Paragraph({
+      children:[new TextRun({text:'Bacharelado em Sistemas de Informação', bold:true, font:'Arial', size:32})],
+      alignment:AlignmentType.CENTER, spacing:{after:1600}
+    }),
+    new Paragraph({
+      children:[new TextRun({text:`Guajará-Mirim — RO`, font:'Arial', size:24})],
+      alignment:AlignmentType.CENTER, spacing:{after:120}
+    }),
+    new Paragraph({
+      children:[new TextRun({text:new Date().getFullYear().toString(), font:'Arial', size:24})],
+      alignment:AlignmentType.CENTER
+    }),
+    new Paragraph({children:[new PageBreak()]}),
+  ];
+  docChildren.push(...capaParagrafos);
+
+  // ── Membros da Comissão ───────────────────────────────────
+  docChildren.push(
+    new Paragraph({heading:HeadingLevel.HEADING_1, children:[new TextRun({text:'MEMBROS DA COMISSÃO', bold:true, font:'Arial', size:28})], alignment:AlignmentType.CENTER, spacing:{before:0, after:400}}),
+  );
+  docChildren.push(
+    new Paragraph({children:[new TextRun({text:'Comissão nomeada pela Portaria Nº 1463/GUAJARÁ-MIRIM/IFRO, de 13 de março de 2026.', font:'Arial', size:24})], alignment:AlignmentType.CENTER, spacing:{after:200}}),
+  );
+  MEMBROS_NOMES.forEach(nome => {
+    docChildren.push(new Paragraph({children:[new TextRun({text:nome, font:'Arial', size:24})], alignment:AlignmentType.CENTER, spacing:{after:80}}));
+  });
+  docChildren.push(new Paragraph({children:[new PageBreak()]}));
+
+  // ── Seções selecionadas ───────────────────────────────────
+  let secCount = 0;
+  for(const s of secoes){
+    const html = contMap[s.uid]||'';
+    const temConteudo = !!html.trim();
+
+    if(apenasComConteudo && !temConteudo) continue;
+    secCount++;
+
+    // Cabeçalho da seção
+    docChildren.push(
+      new Paragraph({
+        heading: HeadingLevel.HEADING_2,
+        children:[new TextRun({text:`${s.n} — ${s.t}`, bold:true, font:'Arial', size:28})],
+        spacing:{before:400, after:200},
+        border:{bottom:{style:BorderStyle.SINGLE, size:1, color:'CCCCCC', space:4}}
+      })
+    );
+
+    // Metadados da seção
+    const resp = secsData[s.uid]?.responsavel || s.r || '';
+    const prazo = secsData[s.uid]?.prazo || s.p || '';
+    docChildren.push(
+      new Paragraph({
+        children:[
+          new TextRun({text:`Responsável: ${resp}`, font:'Arial', size:20, italics:true, color:'666666'}),
+          prazo ? new TextRun({text:`   |   Prazo: ${new Date(prazo+'T12:00:00').toLocaleDateString('pt-BR')}`, font:'Arial', size:20, italics:true, color:'888888'}) : new TextRun({text:''}),
+        ],
+        spacing:{after:200}
+      })
+    );
+
+    // Conteúdo
+    if(temConteudo){
+      const pars = htmlParaDocxChildren(html);
+      docChildren.push(...pars);
+    } else if(marcarPendente){
+      docChildren.push(new Paragraph({
+        children:[new TextRun({text:'[Conteúdo pendente de elaboração]', italics:true, font:'Arial', size:24, color:'888888'})],
+        spacing:{after:200}
+      }));
+    }
+  }
+
+  if(secCount === 0){
+    showToast('⚠ Nenhuma seção com conteúdo foi encontrada. Edite as seções no Editor do PPC antes de gerar.', 6000);
+    return;
+  }
+
+  // ── Montar documento ──────────────────────────────────────
+  const doc = new Document({
+    styles:{
+      default:{
+        document:{run:{font:'Arial', size:24}},
+        heading1:{run:{font:'Arial', size:32, bold:true}},
+        heading2:{run:{font:'Arial', size:28, bold:true}},
+        heading3:{run:{font:'Arial', size:26, bold:true}},
+      }
+    },
+    sections:[{
+      properties:{
+        page:{
+          size:{width:11906, height:16838},
+          margin:{top:1418, right:992, bottom:1134, left:1701}  // A4 NBR (3cm esq, 2cm dir)
+        }
+      },
+      headers:{
+        default: new Header({children:[
+          new Paragraph({
+            children:[new TextRun({text:'IFRO Campus Guajará-Mirim — PPC Bacharelado em Sistemas de Informação', font:'Arial', size:18, color:'888888'})],
+            alignment:AlignmentType.CENTER
+          })
+        ]})
+      },
+      footers:{
+        default: new Footer({children:[
+          new Paragraph({
+            children:[
+              new TextRun({text:'Página ', font:'Arial', size:18, color:'888888'}),
+              new PageNumber(),
+            ],
+            alignment:AlignmentType.CENTER
+          })
+        ]})
+      },
+      children: docChildren
+    }]
+  });
+
+  const blob = await Packer.toBlob(doc);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `PPC_SI_IFRO_${new Date().toISOString().slice(0,10)}.docx`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 5000);
+
+  showToast(`✅ Documento gerado com ${secCount} seções!`, 4000);
+}
+
+// ── Gerar PDF via impressão ──────────────────────────────────
+async function gerarPDF(){
+  showToast('⏳ Preparando visualização para impressão...', 3000);
+
+  // Coletar seções selecionadas e seus conteúdos
+  const selecionados = [];
+  document.querySelectorAll('[data-uid]:checked').forEach(chk => {
+    const uid = chk.dataset.uid;
+    const sec = SECOES_BASE.find(s => s.uid === uid);
+    if(sec) selecionados.push(sec);
+  });
+
+  if(!selecionados.length){
+    showToast('❌ Selecione ao menos uma seção.');
+    return;
+  }
+
+  const uids = selecionados.map(s=>s.uid);
+  const {data:conts} = await db.sel('conteudos',`secao_uid=in.(${uids.join(',')})&select=secao_uid,conteudo`);
+  const contMap = {};
+  (conts||[]).forEach(c => contMap[c.secao_uid] = c.conteudo||'');
+
+  // Montar área de impressão
+  let printHTML = `
+    <div class="pdf-page">
+      <div style="text-align:center;margin-bottom:3cm">
+        <p style="font-size:12pt;font-weight:bold;text-transform:uppercase">Ministério da Educação</p>
+        <p style="font-size:12pt;font-weight:bold">Instituto Federal de Educação, Ciência e Tecnologia de Rondônia</p>
+        <p style="font-size:12pt;font-weight:bold">Campus Guajará-Mirim</p>
+        <br><br>
+        <p style="font-size:18pt;font-weight:bold;text-transform:uppercase">Projeto Pedagógico do Curso</p>
+        <p style="font-size:16pt;font-weight:bold">Bacharelado em Sistemas de Informação</p>
+        <br><br>
+        <p style="font-size:12pt">Guajará-Mirim — RO · ${new Date().getFullYear()}</p>
+      </div>
+    </div>
+    <div class="pdf-page">
+      <h1>Membros da Comissão</h1>
+      <p style="text-align:center;margin-bottom:14pt">Comissão nomeada pela Portaria Nº 1463/GUAJARÁ-MIRIM/IFRO, de 13 de março de 2026.</p>
+      ${MEMBROS_NOMES.map(n=>`<p style="text-align:center">${n}</p>`).join('')}
+    </div>
+  `;
+
+  for(const s of selecionados){
+    const html = contMap[s.uid]||'';
+    if(!html.trim()) continue;
+    printHTML += `
+      <div class="pdf-page">
+        <h2>${s.n} — ${esc(s.t)}</h2>
+        <p style="font-size:10pt;color:#888;font-style:italic;margin-bottom:14pt">
+          Responsável: ${esc(secsData[s.uid]?.responsavel||s.r||'')}
+        </p>
+        <div>${html}</div>
+      </div>
+    `;
+  }
+
+  const printArea = document.getElementById('pdf-print-area');
+  if(printArea){
+    printArea.innerHTML = printHTML;
+  } else {
+    const div = document.createElement('div');
+    div.id = 'pdf-print-area';
+    div.innerHTML = printHTML;
+    document.body.appendChild(div);
+  }
+
+  setTimeout(()=> window.print(), 400);
+}
+
 function refreshDashMetrics(){
   const all=SECOES_BASE.map(s=>secsData[s.uid]?.status||s.s||'todo');
   const done=all.filter(x=>x==='done').length;
@@ -2256,5 +2992,6 @@ function closeSB(){document.getElementById('sidebar').classList.remove('open');d
   }
 })();
 </script>
+<div id="pdf-print-area"></div>
 </body>
 </html>
