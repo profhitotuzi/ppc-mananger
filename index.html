@@ -705,7 +705,6 @@ const MEMBROS_NOMES = [
   'Thays da Silva Mandu','Valnei de Lima Oliveira','Wanderson Ribeiro de Oliveira',
   'Josue Marciel da Silva'
 ];
-const MEMBROS_NOMES = ['Cícero Felix da Silva', 'Fernanda Leite Dias', 'Geane da Silva Tavares', 'Josue Marciel da Silva', 'Juliano C. G. de Melo', 'Levy Matheus Gomes Dias', 'Marcello Pereira Tamwing', 'Marcus Vinicius C. Morro', 'Neemias Ferreira Hitotuzi', 'Paulo Lacerda da Silva', 'Rosangela C. C. Schmidt', 'Thaýs Mandú', 'Valnei Oliveira', 'Wanderson Ribeiro de Oliveira', 'Washington da Silva Batista'];
 
 const DIAS_SEMANA = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -2220,36 +2219,41 @@ function closeSB(){document.getElementById('sidebar').classList.remove('open');d
 // BOOT
 // ════════════════════════════════════════════════════════════
 (async function boot(){
-  const url=localStorage.getItem('sb_url');
-  const key=localStorage.getItem('sb_key');
-  const tok=localStorage.getItem('sb_token');
+  try{
+    const url=localStorage.getItem('sb_url');
+    const key=localStorage.getItem('sb_key');
+    const tok=localStorage.getItem('sb_token');
 
-  // Sem credenciais salvas → mostrar tela de configuração
-  if(!url||!key){
+    // Sem credenciais → tela de configuração
+    if(!url||!key){
+      document.getElementById('scr-config').style.display='flex';
+      return;
+    }
+
+    SB_URL=url.replace(/\/$/,''); SB_KEY=key;
+
+    // Tem token → tentar revalidar sessão
+    if(tok){
+      SB_TOKEN=tok;
+      try{
+        const {data,error}=await sbGetUser();
+        if(!error&&data?.id){
+          await loadProfileAndEnter(data);
+          return;
+        }
+      }catch(e){}
+      localStorage.removeItem('sb_token');
+      SB_TOKEN='';
+    }
+
+    // Credenciais ok mas sem sessão → tela de login
+    document.getElementById('scr-auth').style.display='flex';
+
+  }catch(err){
+    // Fallback de segurança — sempre mostra algo
+    console.error('Boot error:', err);
     document.getElementById('scr-config').style.display='flex';
-    return;
   }
-
-  // Credenciais existem → configurar e tentar entrar direto
-  SB_URL=url.replace(/\/$/,''); SB_KEY=key;
-
-  if(tok){
-    SB_TOKEN=tok;
-    try{
-      const {data,error}=await sbGetUser();
-      if(!error&&data?.id){
-        // Sessão válida → entrar no app
-        await loadProfileAndEnter(data);
-        return;
-      }
-    }catch(e){}
-    // Token expirado → limpar e ir para login
-    localStorage.removeItem('sb_token');
-    SB_TOKEN='';
-  }
-
-  // Tem credenciais mas sem sessão → tela de login
-  document.getElementById('scr-auth').style.display='flex';
 })();
 </script>
 </body>
